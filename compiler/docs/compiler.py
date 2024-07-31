@@ -378,6 +378,7 @@ def pyrogram_api():
         Telegram Business
             create_invoice_link
             get_business_connection
+            get_stars_transactions
         """,
         authorization="""
         Authorization
@@ -600,6 +601,11 @@ def pyrogram_api():
             BotCommandScopeChat
             BotCommandScopeChatAdministrators
             BotCommandScopeChatMember
+        """,
+        business="""
+        Telegram Business
+            StarsStatus
+            StarsTransaction
         """,
         input_media="""
         Input Media
