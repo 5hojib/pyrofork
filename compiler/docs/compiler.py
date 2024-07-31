@@ -573,6 +573,9 @@ def pyrogram_api():
             RequestPeerTypeChannel
             RequestPeerTypeChat
             RequestPeerTypeUser
+            RequestedChats
+            RequestedChat
+            RequestedUser
             LoginUrl
             ForceReply
             CallbackQuery
