@@ -1,0 +1,54 @@
+name: Format and Test Code with Rye
+
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-format-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout electrogram
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install the latest version of rye
+        uses: eifinger/setup-rye@v4
+        with:
+          version: 'latest'
+
+      - name: Install dependencies
+        run: |
+          rye pin 3.12
+          rye sync
+
+      - name: Run ruff to lint and format code
+        run: |
+          rye run ruff check . --exit-zero
+          rye fmt
+          git add -u
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "5hojib"
+          git config --global user.email "yesiamshojib@gmail.com"
+          if git diff-index --quiet HEAD --; then
+            echo "No changes to commit."
+          else
+            git commit -m "InkyPinkyPonky [no ci]" --signoff
+            git push origin ${{ github.ref }}
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GX_TOKEN }}
+
+      - name: Generate API
+        run: rye run api
+
+      - name: Run tests
+        run: rye run python -m pytest
