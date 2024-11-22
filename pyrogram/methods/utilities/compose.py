@@ -16,18 +16,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
-from typing import List
+from typing import TYPE_CHECKING
 
-import pyrogram
 from .idle import idle
 
+if TYPE_CHECKING:
+    import pyrogram
 
-async def compose(
-    clients: List["pyrogram.Client"],
-    sequential: bool = False
-):
+
+async def compose(clients: list[pyrogram.Client], sequential: bool = False):
     """Run multiple clients at once.
 
     This method can be used to run multiple clients at once and can be found directly in the ``pyrogram`` package.

@@ -16,11 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from io import BytesIO
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from ..tl_object import TLObject
+from pyrogram.raw.core.tl_object import TLObject
+
+if TYPE_CHECKING:
+    from io import BytesIO
 
 
 class Bytes(bytes, TLObject):
@@ -42,15 +45,7 @@ class Bytes(bytes, TLObject):
         length = len(value)
 
         if length <= 253:
-            return (
-                bytes([length])
-                + value
-                + bytes(-(length + 1) % 4)
-            )
-        else:
-            return (
-                bytes([254])
-                + length.to_bytes(3, "little")
-                + value
-                + bytes(-length % 4)
-            )
+            return bytes([length]) + value + bytes(-(length + 1) % 4)
+        return (
+            bytes([254]) + length.to_bytes(3, "little") + value + bytes(-length % 4)
+        )

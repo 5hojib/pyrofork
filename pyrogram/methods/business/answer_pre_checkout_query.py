@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -23,10 +24,10 @@ from pyrogram import raw
 
 class AnswerPreCheckoutQuery:
     async def answer_pre_checkout_query(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         pre_checkout_query_id: str,
-        success: bool = None,
-        error: str = None
+        success: bool | None = None,
+        error: str | None = None,
     ):
         """Send answers to pre-checkout queries.
 
@@ -60,6 +61,6 @@ class AnswerPreCheckoutQuery:
             raw.functions.messages.SetBotPrecheckoutResults(
                 query_id=int(pre_checkout_query_id),
                 success=success or None,
-                error=error or None
+                error=error or None,
             )
         )

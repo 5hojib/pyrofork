@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import os
-from typing import Union, BinaryIO, List
+from typing import BinaryIO
 
 import pyrogram
 from pyrogram import raw, types, utils
@@ -27,15 +28,15 @@ from pyrogram.file_id import FileType
 
 class SetChatPhoto:
     async def set_chat_photo(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         *,
-        photo: Union[str, BinaryIO] = None,
-        emoji: int = None,
-        emoji_background: Union[int, List[int]] = None,
-        video: Union[str, BinaryIO] = None,
-        video_start_ts: float = None,
-    ) -> Union["types.Message", bool]:
+        photo: str | BinaryIO | None = None,
+        emoji: int | None = None,
+        emoji_background: int | list[int] | None = None,
+        video: str | BinaryIO | None = None,
+        video_start_ts: float | None = None,
+    ) -> types.Message | bool:
         """Set a new chat photo or video (H.264/MPEG-4 AVC video, max 5 seconds).
 
         The ``photo`` and ``video`` arguments are mutually exclusive.
@@ -120,20 +121,22 @@ class SetChatPhoto:
                         video_start_ts=video_start_ts,
                     )
                 else:
-                    raise ValueError("You must provide a valid file path for the video")
+                    raise ValueError(
+                        "You must provide a valid file path for the video"
+                    )
             else:
                 photo = raw.types.InputChatUploadedPhoto(
-                    video=await self.save_file(video),
-                    video_start_ts=video_start_ts
+                    video=await self.save_file(video), video_start_ts=video_start_ts
                 )
         elif emoji is not None:
-            background_colors = emoji_background if emoji_background is not None else [0xFFFFFF]
+            background_colors = (
+                emoji_background if emoji_background is not None else [0xFFFFFF]
+            )
             if isinstance(background_colors, int):
                 background_colors = [background_colors]
             photo = raw.types.InputChatUploadedPhoto(
                 video_emoji_markup=raw.types.VideoSizeEmojiMarkup(
-                    emoji_id=emoji,
-                    background_colors=background_colors
+                    emoji_id=emoji, background_colors=background_colors
                 )
             )
         else:
@@ -148,21 +151,19 @@ class SetChatPhoto:
             )
         elif isinstance(peer, raw.types.InputPeerChannel):
             r = await self.invoke(
-                raw.functions.channels.EditPhoto(
-                    channel=peer,
-                    photo=photo
-                )
+                raw.functions.channels.EditPhoto(channel=peer, photo=photo)
             )
         else:
             raise ValueError(f'The chat_id "{chat_id}" belongs to a user')
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateNewMessage, raw.types.UpdateNewChannelMessage)):
+            if isinstance(
+                i, raw.types.UpdateNewMessage | raw.types.UpdateNewChannelMessage
+            ):
                 return await types.Message._parse(
                     self,
                     i.message,
                     {i.id: i for i in r.users},
-                    {i.id: i for i in r.chats}
+                    {i.id: i for i in r.chats},
                 )
-        else:
-            return True
+        return True

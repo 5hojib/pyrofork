@@ -16,21 +16,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union, List
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class VotePoll:
     async def vote_poll(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: id,
-        options: Union[int, List[int]]
-    ) -> "types.Poll":
+        options: int | list[int],
+    ) -> types.Poll:
         """Vote a poll.
 
         .. include:: /_includes/usable-by/users.rst
@@ -64,7 +62,7 @@ class VotePoll:
             raw.functions.messages.SendVote(
                 peer=await self.resolve_peer(chat_id),
                 msg_id=message_id,
-                options=[poll.options[option].data for option in options]
+                options=[poll.options[option].data for option in options],
             )
         )
 

@@ -16,16 +16,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from asyncio import iscoroutinefunction
-from typing import Callable, Tuple
+from typing import TYPE_CHECKING
 
 import pyrogram
-
-from pyrogram.utils import PyromodConfig
 from pyrogram.types import CallbackQuery, Identifier, Listener
+from pyrogram.utils import PyromodConfig
 
 from .handler import Handler
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class CallbackQueryHandler(Handler):
@@ -86,8 +89,8 @@ class CallbackQueryHandler(Handler):
         )
 
     async def check_if_has_matching_listener(
-        self, client: "pyrogram.Client", query: CallbackQuery
-    ) -> Tuple[bool, Listener]:
+        self, client: pyrogram.Client, query: CallbackQuery
+    ) -> tuple[bool, Listener]:
         """
         Checks if the CallbackQuery object has a matching listener.
 
@@ -119,7 +122,7 @@ class CallbackQueryHandler(Handler):
 
         return listener_does_match, listener
 
-    async def check(self, client: "pyrogram.Client", query: CallbackQuery):
+    async def check(self, client: pyrogram.Client, query: CallbackQuery):
         """
         Checks if the CallbackQuery object has a matching listener or handler.
 
@@ -173,7 +176,7 @@ class CallbackQueryHandler(Handler):
         return listener_does_match or handler_does_match
 
     async def resolve_future_or_callback(
-        self, client: "pyrogram.Client", query: CallbackQuery, *args
+        self, client: pyrogram.Client, query: CallbackQuery, *args
     ):
         """
         Resolves the future or calls the callback of the listener. Will call the original handler if no listener.
@@ -194,14 +197,12 @@ class CallbackQueryHandler(Handler):
                 listener.future.set_result(query)
 
                 raise pyrogram.StopPropagation
-            elif listener.callback:
+            if listener.callback:
                 if iscoroutinefunction(listener.callback):
                     await listener.callback(client, query, *args)
                 else:
                     listener.callback(client, query, *args)
 
                 raise pyrogram.StopPropagation
-            else:
-                raise ValueError("Listener must have either a future or a callback")
-        else:
-            await self.original_callback(client, query, *args)
+            raise ValueError("Listener must have either a future or a callback")
+        await self.original_callback(client, query, *args)

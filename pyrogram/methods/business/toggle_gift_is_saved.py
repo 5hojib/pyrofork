@@ -15,9 +15,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -25,10 +23,10 @@ from pyrogram import raw
 
 class ToggleGiftIsSaved:
     async def toggle_gift_is_saved(
-        self: "pyrogram.Client",
-        sender_user_id: Union[int, str],
+        self: pyrogram.Client,
+        sender_user_id: int | str,
         message_id: int,
-        is_saved: bool
+        is_saved: bool,
     ) -> bool:
         """Toggles whether a gift is shown on the current user's profile page.
 
@@ -57,15 +55,11 @@ class ToggleGiftIsSaved:
         """
         peer = await self.resolve_peer(sender_user_id)
 
-        if not isinstance(peer, (raw.types.InputPeerUser, raw.types.InputPeerSelf)):
+        if not isinstance(peer, raw.types.InputPeerUser | raw.types.InputPeerSelf):
             raise ValueError("sender_user_id must belong to a user.")
 
-        r = await self.invoke(
+        return await self.invoke(
             raw.functions.payments.SaveStarGift(
-                user_id=peer,
-                msg_id=message_id,
-                unsave=not is_saved
+                user_id=peer, msg_id=message_id, unsave=not is_saved
             )
         )
-
-        return r

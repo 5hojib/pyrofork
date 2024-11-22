@@ -15,23 +15,21 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-
-
-from typing import Optional, Union, List
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw, types, enums, utils
+from pyrogram import enums, raw, types, utils
 
 
 class SendGift:
     async def send_gift(
-        self: "pyrogram.Client",
-        user_id: Union[int, str],
+        self: pyrogram.Client,
+        user_id: int | str,
         gift_id: int,
-        text: Optional[str] = None,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        entities: Optional[List["types.MessageEntity"]] = None,
-        is_private: Optional[bool] = None,
+        text: str | None = None,
+        parse_mode: enums.ParseMode | None = None,
+        entities: list[types.MessageEntity] | None = None,
+        is_private: bool | None = None,
     ) -> bool:
         """Sends a gift to another user.
 
@@ -75,30 +73,29 @@ class SendGift:
         """
         peer = await self.resolve_peer(user_id)
 
-        if not isinstance(peer, (raw.types.InputPeerUser, raw.types.InputPeerSelf)):
+        if not isinstance(peer, raw.types.InputPeerUser | raw.types.InputPeerSelf):
             raise ValueError("user_id must belong to a user.")
 
-        text, entities = (await utils.parse_text_entities(self, text, parse_mode, entities)).values()
+        text, entities = (
+            await utils.parse_text_entities(self, text, parse_mode, entities)
+        ).values()
 
         invoice = raw.types.InputInvoiceStarGift(
             user_id=peer,
             gift_id=gift_id,
             hide_name=is_private,
-            message=raw.types.TextWithEntities(
-                text=text, entities=entities or []
-            ) if text else None
+            message=raw.types.TextWithEntities(text=text, entities=entities or [])
+            if text
+            else None,
         )
 
         form = await self.invoke(
-            raw.functions.payments.GetPaymentForm(
-                invoice=invoice
-            )
+            raw.functions.payments.GetPaymentForm(invoice=invoice)
         )
 
         await self.invoke(
             raw.functions.payments.SendStarsForm(
-                form_id=form.form_id,
-                invoice=invoice
+                form_id=form.form_id, invoice=invoice
             )
         )
 

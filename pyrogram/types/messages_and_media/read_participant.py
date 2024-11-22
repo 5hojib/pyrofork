@@ -15,11 +15,17 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with PyroFork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, types, utils
-from datetime import datetime
-from ..object import Object
+from pyrogram import raw, utils
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
+
 
 class ReadParticipant(Object):
     """Contains information about a read participant.
@@ -35,9 +41,9 @@ class ReadParticipant(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        user_id: "pyrogram.types.User",
-        date: "datetime"
+        client: pyrogram.Client = None,
+        user_id: pyrogram.types.User,
+        date: datetime,
     ):
         super().__init__(client)
 
@@ -46,11 +52,10 @@ class ReadParticipant(Object):
 
     @staticmethod
     async def _parse(
-        client,
-        read_participant: "raw.base.ReadParticipantDate"
-    ) -> "ReadParticipant":
+        client, read_participant: raw.base.ReadParticipantDate
+    ) -> ReadParticipant:
         return ReadParticipant(
             client=client,
             user_id=await client.get_users(read_participant.user_id),
-            date=utils.timestamp_to_datetime(read_participant.date)
+            date=utils.timestamp_to_datetime(read_participant.date),
         )

@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw, types
@@ -23,10 +24,10 @@ from pyrogram import raw, types
 
 class GetCollectibleItemInfo:
     async def get_collectible_item_info(
-        self: "pyrogram.Client",
-        username: str = None,
-        phone_number: str = None
-    ) -> "types.CollectibleInfo":
+        self: pyrogram.Client,
+        username: str | None = None,
+        phone_number: str | None = None,
+    ) -> types.CollectibleInfo:
         """Returns information about a given collectible item that was purchased at https://fragment.com
         .. include:: /_includes/usable-by/users.rst
         You must use exactly one of ``username`` OR ``phone_number``.
@@ -55,9 +56,7 @@ class GetCollectibleItemInfo:
             )
 
         r = await self.invoke(
-            raw.functions.fragment.GetCollectibleInfo(
-                collectible=input_collectible
-            )
+            raw.functions.fragment.GetCollectibleInfo(collectible=input_collectible)
         )
 
         return types.CollectibleItemInfo._parse(r)

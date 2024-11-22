@@ -15,15 +15,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .pre_checkout_query import PreCheckoutQuery
 from .shipping_address import ShippingAddress
 from .shipping_option import ShippingOption
 from .shipping_query import ShippingQuery
 
-__all__ = [
-    "PreCheckoutQuery",
-    "ShippingAddress",
-    "ShippingOption",
-    "ShippingQuery"
-]
+__all__ = ["PreCheckoutQuery", "ShippingAddress", "ShippingOption", "ShippingQuery"]

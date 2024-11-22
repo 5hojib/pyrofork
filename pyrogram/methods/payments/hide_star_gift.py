@@ -16,9 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -26,9 +24,7 @@ from pyrogram import raw
 
 class HideStarGift:
     async def hide_star_gift(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        message_id: int
+        self: pyrogram.Client, chat_id: int | str, message_id: int
     ) -> bool:
         """Hide the star gift from your profile.
 
@@ -54,15 +50,11 @@ class HideStarGift:
         """
         peer = await self.resolve_peer(chat_id)
 
-        if not isinstance(peer, (raw.types.InputPeerUser, raw.types.InputPeerSelf)):
+        if not isinstance(peer, raw.types.InputPeerUser | raw.types.InputPeerSelf):
             raise ValueError("chat_id must belong to a user.")
 
-        r = await self.invoke(
+        return await self.invoke(
             raw.functions.payments.SaveStarGift(
-                user_id=peer,
-                msg_id=message_id,
-                unsave=True
+                user_id=peer, msg_id=message_id, unsave=True
             )
         )
-
-        return r

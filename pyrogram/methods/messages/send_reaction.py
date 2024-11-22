@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with PyroFork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union, List
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw, types
@@ -25,14 +24,14 @@ from pyrogram import raw, types
 
 class SendReaction:
     async def send_reaction(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        message_id: int = None,
-        story_id: int = None,
-        emoji: Union[int, str, List[Union[int, str]]] = None,
+        self: pyrogram.Client,
+        chat_id: int | str,
+        message_id: int | None = None,
+        story_id: int | None = None,
+        emoji: int | str | list[int | str] | None = None,
         big: bool = False,
-        add_to_recent: bool = False
-    ) -> "types.MessageReactions":
+        add_to_recent: bool = False,
+    ) -> types.MessageReactions:
         """Use this method to send reactions on a message/stories.
         Service messages can't be reacted to.
         Automatically forwarded messages from
@@ -61,7 +60,7 @@ class SendReaction:
                 Pass True to set the reaction with a big animation.
                 For message reactions only.
                 Defaults to False.
-                
+
             add_to_recent (``bool``, *optional*):
                 Pass True if the reaction should appear in the recently used reactions.
                 This option is applicable only for users.
@@ -84,17 +83,20 @@ class SendReaction:
                 await app.send_reaction(chat_id, story_id=story_id)
         """
         if isinstance(emoji, list):
-            reaction = [
+            reaction = (
+                [
                     raw.types.ReactionCustomEmoji(document_id=i)
                     if isinstance(i, int)
                     else raw.types.ReactionEmoji(emoticon=i)
                     for i in emoji
-            ] if emoji else None
+                ]
+                if emoji
+                else None
+            )
+        elif isinstance(emoji, int):
+            reaction = [raw.types.ReactionCustomEmoji(document_id=emoji)]
         else:
-            if isinstance(emoji, int):
-                reaction = [raw.types.ReactionCustomEmoji(document_id=emoji)]
-            else:
-                reaction = [raw.types.ReactionEmoji(emoticon=emoji)] if emoji else None
+            reaction = [raw.types.ReactionEmoji(emoticon=emoji)] if emoji else None
         if message_id is not None:
             r = await self.invoke(
                 raw.functions.messages.SendReaction(
@@ -102,21 +104,23 @@ class SendReaction:
                     msg_id=message_id,
                     reaction=reaction,
                     big=big,
-                    add_to_recent=add_to_recent
+                    add_to_recent=add_to_recent,
                 )
             )
             for i in r.updates:
-              if isinstance(i, raw.types.UpdateMessageReactions):
-                  return types.MessageReactions._parse(self, i.reactions)
-        elif story_id is not None:
+                if isinstance(i, raw.types.UpdateMessageReactions):
+                    return types.MessageReactions._parse(self, i.reactions)
+            return None
+        if story_id is not None:
             await self.invoke(
                 raw.functions.stories.SendReaction(
                     peer=await self.resolve_peer(chat_id),
                     story_id=story_id,
-                    reaction=raw.types.ReactionEmoji(emoticon=emoji) if emoji else None,
-                    add_to_recent=add_to_recent
+                    reaction=raw.types.ReactionEmoji(emoticon=emoji)
+                    if emoji
+                    else None,
+                    add_to_recent=add_to_recent,
                 )
             )
             return True
-        else:
-            raise ValueError("You need to pass one of message_id!")
+        raise ValueError("You need to pass one of message_id!")

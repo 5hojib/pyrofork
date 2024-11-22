@@ -16,20 +16,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Union, Optional, AsyncGenerator
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import types, raw
+from pyrogram import raw, types
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 
 class GetDiscussionReplies:
     async def get_discussion_replies(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: int,
         limit: int = 0,
-    ) -> Optional[AsyncGenerator["types.Message", None]]:
+    ) -> AsyncGenerator[types.Message, None] | None:
         """Get the message replies of a discussion thread.
 
         .. include:: /_includes/usable-by/users.rst
@@ -68,7 +72,7 @@ class GetDiscussionReplies:
                     limit=limit,
                     max_id=0,
                     min_id=0,
-                    hash=0
+                    hash=0,
                 )
             )
 
@@ -80,7 +84,9 @@ class GetDiscussionReplies:
                 return
 
             for message in messages:
-                yield await types.Message._parse(self, message, users, chats, replies=0)
+                yield await types.Message._parse(
+                    self, message, users, chats, replies=0
+                )
 
                 current += 1
 

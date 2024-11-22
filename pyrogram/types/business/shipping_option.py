@@ -15,13 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import List
-
-import pyrogram
 from pyrogram import raw, types
-
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class ShippingOption(Object):
@@ -39,12 +36,7 @@ class ShippingOption(Object):
 
     """
 
-    def __init__(
-        self,
-        id: str,
-        title: str,
-        prices: "types.LabeledPrice"
-    ):
+    def __init__(self, id: str, title: str, prices: types.LabeledPrice):
         super().__init__()
 
         self.id = id
@@ -52,7 +44,7 @@ class ShippingOption(Object):
         self.prices = prices
 
     @staticmethod
-    def _parse(shipping_option: "raw.types.ShippingOption") -> "ShippingOption":
+    def _parse(shipping_option: raw.types.ShippingOption) -> ShippingOption:
         if isinstance(shipping_option, raw.types.ShippingOption):
             return ShippingOption(
                 id=shipping_option.id,
@@ -60,15 +52,13 @@ class ShippingOption(Object):
                 prices=[
                     types.LabeledPrice._parse(price)
                     for price in shipping_option.prices
-                ]
+                ],
             )
+        return None
 
     def write(self):
         return raw.types.ShippingOption(
             id=self.id,
             title=self.title,
-            prices=[
-                price.write()
-                for price in self.prices
-            ]
+            prices=[price.write() for price in self.prices],
         )

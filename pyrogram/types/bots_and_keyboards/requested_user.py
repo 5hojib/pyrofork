@@ -15,10 +15,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from ..object import Object
-from pyrogram import enums, raw, types
-from typing import Union
+from pyrogram import raw, types
+from pyrogram.types.object import Object
+
 
 class RequestedUser(Object):
     """Contains information about a requested user.
@@ -42,13 +43,14 @@ class RequestedUser(Object):
         full_name (``str``, *optional*):
             User's full name.
     """
+
     def __init__(
         self,
         user_id: int,
-        first_name: str = None,
-        last_name: str = None,
-        username: str = None,
-        photo: "types.ChatPhoto" = None,
+        first_name: str | None = None,
+        last_name: str | None = None,
+        username: str | None = None,
+        photo: types.ChatPhoto = None,
     ):
         super().__init__()
 
@@ -60,23 +62,18 @@ class RequestedUser(Object):
 
     @staticmethod
     async def _parse(
-        client,
-        request: Union[
-            "raw.types.RequestedPeerUser",
-            "raw.types.PeerUser"
-        ]
-    ) -> "RequestedUser":
-
+        client, request: raw.types.RequestedPeerUser | raw.types.PeerUser
+    ) -> RequestedUser:
         photo = None
-        if getattr(request,"photo", None):
-            photo = types.Photo._parse(client, getattr(request,"photo", None), 0)
+        if getattr(request, "photo", None):
+            photo = types.Photo._parse(client, getattr(request, "photo", None), 0)
 
         return RequestedUser(
-            user_id=getattr(request,"user_id", None),
-            first_name=getattr(request,"first_name", None),
-            last_name=getattr(request,"last_name", None),
-            username=getattr(request,"username", None),
-            photo=photo
+            user_id=getattr(request, "user_id", None),
+            first_name=getattr(request, "first_name", None),
+            last_name=getattr(request, "last_name", None),
+            username=getattr(request, "username", None),
+            photo=photo,
         )
 
     @property

@@ -15,12 +15,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-
 from pyrogram import raw, types, utils
-from ..object import Object
-from typing import Union
+from pyrogram.types.object import Object
 
 
 class MessageStory(Object):
@@ -29,7 +28,7 @@ class MessageStory(Object):
     Parameters:
         from_user (:obj:`~pyrogram.types.User`, *optional*):
             Sender of the story.
-        
+
         sender_chat (:obj:`~pyrogram.types.Chat`, *optional*):
             Sender of the story. If the story is from channel.
 
@@ -40,9 +39,9 @@ class MessageStory(Object):
     def __init__(
         self,
         *,
-        from_user: "types.User" = None,
-        sender_chat: "types.Chat" = None,
-        story_id: int
+        from_user: types.User = None,
+        sender_chat: types.Chat = None,
+        story_id: int,
     ):
         super().__init__()
 
@@ -52,9 +51,8 @@ class MessageStory(Object):
 
     @staticmethod
     async def _parse(
-        client: "pyrogram.Client",
-        message_story: "raw.types.MessageMediaStory"
-    ) -> Union["MessageStory", "types.Story"]:
+        client: pyrogram.Client, message_story: raw.types.MessageMediaStory
+    ) -> MessageStory | types.Story:
         from_user = None
         sender_chat = None
         user_id = None
@@ -73,7 +71,5 @@ class MessageStory(Object):
         if not client.me.is_bot:
             return await client.get_stories(user_id or chat_id, message_story.id)
         return MessageStory(
-            from_user=from_user,
-            sender_chat=sender_chat,
-            story_id=message_story.id
+            from_user=from_user, sender_chat=sender_chat, story_id=message_story.id
         )

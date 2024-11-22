@@ -16,18 +16,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import List
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class ImportContacts:
     async def import_contacts(
-        self: "pyrogram.Client",
-        contacts: List["types.InputPhoneContact"]
+        self: pyrogram.Client, contacts: list[types.InputPhoneContact]
     ):
         """Import contacts to your Telegram address book.
 
@@ -50,10 +47,6 @@ class ImportContacts:
                     InputPhoneContact("+1-456-789-0123", "Bar"),
                     InputPhoneContact("+1-789-012-3456", "Baz")])
         """
-        imported_contacts = await self.invoke(
-            raw.functions.contacts.ImportContacts(
-                contacts=contacts
-            )
+        return await self.invoke(
+            raw.functions.contacts.ImportContacts(contacts=contacts)
         )
-
-        return imported_contacts

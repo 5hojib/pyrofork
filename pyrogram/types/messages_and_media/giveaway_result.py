@@ -15,13 +15,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pyrogram
-
-from datetime import datetime
 from pyrogram import raw, types, utils
-from ..object import Object
-from typing import List, Union
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class GiveawayResult(Object):
@@ -68,19 +71,19 @@ class GiveawayResult(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        chat: "types.Chat" = None,
-        giveaway_message: "types.Message" = None,
+        client: pyrogram.Client = None,
+        chat: types.Chat = None,
+        giveaway_message: types.Message = None,
         quantity: int,
         unclaimed_quantity: int,
-        winners: List["types.User"] = None,
-        months: int = None,
-        stars: int = None,
-        expire_date: datetime = None,
-        new_subscribers : bool = None,
-        is_refunded: bool = None,
-        is_star_giveaway: bool = None,
-        is_winners_hidden: bool
+        winners: list[types.User] | None = None,
+        months: int | None = None,
+        stars: int | None = None,
+        expire_date: datetime | None = None,
+        new_subscribers: bool | None = None,
+        is_refunded: bool | None = None,
+        is_star_giveaway: bool | None = None,
+        is_winners_hidden: bool,
     ):
         super().__init__(client)
 
@@ -100,12 +103,10 @@ class GiveawayResult(Object):
     @staticmethod
     async def _parse(
         client,
-        giveaway_result: Union[
-            "raw.types.MessageActionGiveawayResults",
-            "raw.types.MessageMediaGiveawayResults"
-        ],
-        hide_winners: bool = False
-    ) -> "GiveawayResult":
+        giveaway_result: raw.types.MessageActionGiveawayResults
+        | raw.types.MessageMediaGiveawayResults,
+        hide_winners: bool = False,
+    ) -> GiveawayResult:
         chat = None
         giveaway_message = None
         expired_date = None
@@ -118,12 +119,14 @@ class GiveawayResult(Object):
                 )
             )
             chat = types.Chat._parse_chat(client, chat.chats[0])
-            giveaway_message = await client.get_messages(chat_id, giveaway_result.launch_msg_id)
+            giveaway_message = await client.get_messages(
+                chat_id, giveaway_result.launch_msg_id
+            )
             expired_date = utils.timestamp_to_datetime(giveaway_result.until_date)
             winners = []
             for winner in giveaway_result.winners:
                 winners.append(await client.get_users(winner))
-        
+
         stars = getattr(giveaway_result, "stars", None)
 
         return GiveawayResult(
@@ -133,11 +136,13 @@ class GiveawayResult(Object):
             unclaimed_quantity=getattr(giveaway_result, "unclaimed_count", None),
             winners=winners,
             months=getattr(giveaway_result, "months", None),
-            stars=stars if isinstance(giveaway_result, raw.types.MessageMediaGiveawayResults) else None,
+            stars=stars
+            if isinstance(giveaway_result, raw.types.MessageMediaGiveawayResults)
+            else None,
             expire_date=expired_date,
             new_subscribers=getattr(giveaway_result, "only_new_subscribers", None),
             is_refunded=getattr(giveaway_result, "refunded", None),
             is_star_giveaway=bool(stars),
             is_winners_hidden=hide_winners,
-            client=client
+            client=client,
         )

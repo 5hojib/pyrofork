@@ -16,9 +16,12 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import math
+
 from pyrogram.helpers import array_chunk
+
 
 class Pagination:
     def __init__(self, objects, page_data=None, item_data=None, item_title=None):

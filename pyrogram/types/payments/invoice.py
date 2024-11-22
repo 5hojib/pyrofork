@@ -15,11 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
+from typing import TYPE_CHECKING
 
-from pyrogram import raw, types, utils
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class Invoice(Object):
@@ -55,13 +58,13 @@ class Invoice(Object):
         self,
         *,
         title: str,
-        description :  str,
+        description: str,
         currency: str,
         total_amount: int,
         start_parameter: str,
-        shipping_address_requested: bool = None,
-        test: bool = None,
-        receipt_message_id: int = None,
+        shipping_address_requested: bool | None = None,
+        test: bool | None = None,
+        receipt_message_id: int | None = None,
         # TODO: Implement photo, extended_media parameters
     ):
         super().__init__()
@@ -76,9 +79,7 @@ class Invoice(Object):
         self.receipt_message_id = receipt_message_id
 
     @staticmethod
-    def _parse(
-        message_invoice: "raw.types.MessageMediaInvoice"
-    ) -> "Invoice":
+    def _parse(message_invoice: raw.types.MessageMediaInvoice) -> Invoice:
         return Invoice(
             title=message_invoice.title,
             description=message_invoice.description,
@@ -87,5 +88,5 @@ class Invoice(Object):
             start_parameter=message_invoice.start_param,
             shipping_address_requested=message_invoice.shipping_address_requested,
             test=message_invoice.test,
-            receipt_message_id=message_invoice.receipt_msg_id
+            receipt_message_id=message_invoice.receipt_msg_id,
         )

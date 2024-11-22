@@ -15,9 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from ..object import Object
-from pyrogram import raw
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
+
 
 class WallpaperSettings(Object):
     """A wallpaper settings.
@@ -53,15 +59,15 @@ class WallpaperSettings(Object):
 
     def __init__(
         self,
-        is_blur: bool = None,
-        is_motion: bool = None,
-        background_color: int = None,
-        second_background_color: int = None,
-        third_background_color: int = None,
-        fourth_background_color: int = None,
-        intensity: int = None,
-        rotation: int = None,
-        emoticon: str = None
+        is_blur: bool | None = None,
+        is_motion: bool | None = None,
+        background_color: int | None = None,
+        second_background_color: int | None = None,
+        third_background_color: int | None = None,
+        fourth_background_color: int | None = None,
+        intensity: int | None = None,
+        rotation: int | None = None,
+        emoticon: str | None = None,
     ):
         super().__init__()
         self.is_blur = is_blur
@@ -75,7 +81,7 @@ class WallpaperSettings(Object):
         self.emoticon = emoticon
 
     @staticmethod
-    def _parse(wallpaper_settings: "raw.types.WallPaperSettings") -> "WallpaperSettings":
+    def _parse(wallpaper_settings: raw.types.WallPaperSettings) -> WallpaperSettings:
         if wallpaper_settings is None:
             return None
 
@@ -83,10 +89,16 @@ class WallpaperSettings(Object):
             is_blur=getattr(wallpaper_settings, "blur", None),
             is_motion=getattr(wallpaper_settings, "motion", None),
             background_color=getattr(wallpaper_settings, "background_color", None),
-            second_background_color=getattr(wallpaper_settings, "second_background_color", None),
-            third_background_color=getattr(wallpaper_settings, "third_background_color", None),
-            fourth_background_color=getattr(wallpaper_settings, "fourth_background_color", None),
+            second_background_color=getattr(
+                wallpaper_settings, "second_background_color", None
+            ),
+            third_background_color=getattr(
+                wallpaper_settings, "third_background_color", None
+            ),
+            fourth_background_color=getattr(
+                wallpaper_settings, "fourth_background_color", None
+            ),
             intensity=getattr(wallpaper_settings, "intensity", None),
             rotation=getattr(wallpaper_settings, "rotation", None),
-            emoticon=getattr(wallpaper_settings, "emoticon", None)
+            emoticon=getattr(wallpaper_settings, "emoticon", None),
         )

@@ -16,25 +16,28 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class AnswerInlineQuery:
     async def answer_inline_query(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         inline_query_id: str,
-        results: Iterable["types.InlineQueryResult"],
+        results: Iterable[types.InlineQueryResult],
         cache_time: int = 300,
         is_gallery: bool = False,
         is_personal: bool = False,
         next_offset: str = "",
         switch_pm_text: str = "",
-        switch_pm_parameter: str = ""
+        switch_pm_parameter: str = "",
     ):
         """Send answers to an inline query.
 
@@ -106,8 +109,9 @@ class AnswerInlineQuery:
                 private=is_personal or None,
                 next_offset=next_offset or None,
                 switch_pm=raw.types.InlineBotSwitchPM(
-                    text=switch_pm_text,
-                    start_param=switch_pm_parameter
-                ) if switch_pm_text else None
+                    text=switch_pm_text, start_param=switch_pm_parameter
+                )
+                if switch_pm_text
+                else None,
             )
         )

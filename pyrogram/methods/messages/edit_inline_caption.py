@@ -16,21 +16,23 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING
 
-import pyrogram
-from pyrogram import types, enums
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram import enums, types
 
 
 class EditInlineCaption:
     async def edit_inline_caption(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         inline_message_id: str,
         caption: str,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        reply_markup: "types.InlineKeyboardMarkup" = None,
-        invert_media: bool = None
+        parse_mode: enums.ParseMode | None = None,
+        reply_markup: types.InlineKeyboardMarkup = None,
+        invert_media: bool | None = None,
     ) -> bool:
         """Edit the caption of inline media messages.
 
@@ -68,5 +70,5 @@ class EditInlineCaption:
             text=caption,
             parse_mode=parse_mode,
             reply_markup=reply_markup,
-            invert_media=invert_media
+            invert_media=invert_media,
         )

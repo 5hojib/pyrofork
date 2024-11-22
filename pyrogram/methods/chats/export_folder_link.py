@@ -16,16 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
 
 
 class ExportFolderLink:
-    async def export_folder_link(
-        self: "pyrogram.Client",
-        folder_id: int
-    ) -> str:
+    async def export_folder_link(self: pyrogram.Client, folder_id: int) -> str:
         """Export link to a user's folder.
 
         .. include:: /_includes/usable-by/users.rst
@@ -46,7 +44,7 @@ class ExportFolderLink:
         folder = await self.get_folders(folder_id)
 
         if not folder:
-            return
+            return None
 
         peers = []
 

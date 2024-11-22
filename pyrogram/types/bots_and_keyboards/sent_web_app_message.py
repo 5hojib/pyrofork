@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw, utils
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class SentWebAppMessage(Object):
@@ -31,7 +32,8 @@ class SentWebAppMessage(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         inline_message_id: str,
     ):
         super().__init__()
@@ -39,5 +41,7 @@ class SentWebAppMessage(Object):
         self.inline_message_id = inline_message_id
 
     @staticmethod
-    def _parse(obj: "raw.types.WebViewMessageSent"):
-        return SentWebAppMessage(inline_message_id=utils.pack_inline_message_id(obj.msg_id))
+    def _parse(obj: raw.types.WebViewMessageSent):
+        return SentWebAppMessage(
+            inline_message_id=utils.pack_inline_message_id(obj.msg_id)
+        )

@@ -16,20 +16,20 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-
-from typing import List, Union
 from pyrogram.types import Identifier
+
 
 class StopListening:
     async def stop_listening(
-        self: "pyrogram.Client",
-        listener_type: "pyrogram.enums.ListenerTypes" = pyrogram.enums.ListenerTypes.MESSAGE,
-        chat_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        user_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        message_id: Union[int, List[int]] = None,
-        inline_message_id: Union[str, List[str]] = None,
+        self: pyrogram.Client,
+        listener_type: pyrogram.enums.ListenerTypes = pyrogram.enums.ListenerTypes.MESSAGE,
+        chat_id: int | str | list[int | str] | None = None,
+        user_id: int | str | list[int | str] | None = None,
+        message_id: int | list[int] | None = None,
+        inline_message_id: str | list[str] | None = None,
     ):
         """Stops all listeners that match the given identifier pattern.
 

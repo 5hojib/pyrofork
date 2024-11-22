@@ -15,20 +15,20 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from typing import Union
+from pyrogram import raw, types
 
 
 class CreateForumTopic:
     async def create_forum_topic(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         title: str,
-        icon_color: int = None,
-        icon_emoji_id: int = None
-    ) -> "types.ForumTopicCreated":
+        icon_color: int | None = None,
+        icon_emoji_id: int | None = None,
+    ) -> types.ForumTopicCreated:
         """Create a new forum topic.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -61,7 +61,7 @@ class CreateForumTopic:
                 title=title,
                 random_id=self.rnd_id(),
                 icon_color=icon_color,
-                icon_emoji_id=icon_emoji_id
+                icon_emoji_id=icon_emoji_id,
             )
         )
 

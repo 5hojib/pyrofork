@@ -15,22 +15,26 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
-from typing import Union, List, Iterable
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 log = logging.getLogger(__name__)
 
+
 class GetStories:
     async def get_stories(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        story_ids: Union[int, Iterable[int]],
-    ) -> Union["types.Story", List["types.Story"]]:
+        self: pyrogram.Client,
+        chat_id: int | str,
+        story_ids: int | Iterable[int],
+    ) -> types.Story | list[types.Story]:
         """Get one or more story from an user by using story identifiers.
 
         .. include:: /_includes/usable-by/users.rst
@@ -73,5 +77,11 @@ class GetStories:
         r = await self.invoke(rpc, sleep_threshold=-1)
 
         if is_iterable:
-            return types.List([await types.Story._parse(self, story, peer) for story in r.stories])
-        return await types.Story._parse(self, r.stories[0], peer) if r.stories and len(r.stories) > 0 else None
+            return types.List(
+                [await types.Story._parse(self, story, peer) for story in r.stories]
+            )
+        return (
+            await types.Story._parse(self, r.stories[0], peer)
+            if r.stories and len(r.stories) > 0
+            else None
+        )

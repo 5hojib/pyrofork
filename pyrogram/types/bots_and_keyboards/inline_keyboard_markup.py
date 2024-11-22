@@ -16,13 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import List, Union
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from pyrogram import raw, types
+from pyrogram.types.object import Object
 
 
 class InlineKeyboardMarkup(Object):
@@ -35,7 +33,12 @@ class InlineKeyboardMarkup(Object):
             and only one needed in the first row.
     """
 
-    def __init__(self, inline_keyboard: List[List[Union["types.InlineKeyboardButton", "types.InlineKeyboardButtonBuy"]]]):
+    def __init__(
+        self,
+        inline_keyboard: list[
+            list[types.InlineKeyboardButton | types.InlineKeyboardButtonBuy]
+        ],
+    ):
         super().__init__()
 
         self.inline_keyboard = inline_keyboard
@@ -52,11 +55,9 @@ class InlineKeyboardMarkup(Object):
 
             inline_keyboard.append(row)
 
-        return InlineKeyboardMarkup(
-            inline_keyboard=inline_keyboard
-        )
+        return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
-    async def write(self, client: "pyrogram.Client"):
+    async def write(self, client: pyrogram.Client):
         rows = []
 
         for r in self.inline_keyboard:

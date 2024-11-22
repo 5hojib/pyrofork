@@ -16,15 +16,23 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import List
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
-from pyrogram.file_id import FileId, FileType, FileUniqueId, FileUniqueType, ThumbnailSource
-from ..object import Object
+from pyrogram import raw, types, utils
+from pyrogram.file_id import (
+    FileId,
+    FileType,
+    FileUniqueId,
+    FileUniqueType,
+    ThumbnailSource,
+)
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class Photo(Object):
@@ -60,15 +68,15 @@ class Photo(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         file_id: str,
         file_unique_id: str,
         width: int,
         height: int,
         file_size: int,
         date: datetime,
-        ttl_seconds: int = None,
-        thumbs: List["types.Thumbnail"] = None
+        ttl_seconds: int | None = None,
+        thumbs: list[types.Thumbnail] | None = None,
     ):
         super().__init__(client)
 
@@ -82,9 +90,11 @@ class Photo(Object):
         self.thumbs = thumbs
 
     @staticmethod
-    def _parse(client, photo: "raw.types.Photo", ttl_seconds: int = None) -> "Photo":
+    def _parse(
+        client, photo: raw.types.Photo, ttl_seconds: int | None = None
+    ) -> Photo:
         if isinstance(photo, raw.types.Photo):
-            photos: List[raw.types.PhotoSize] = []
+            photos: list[raw.types.PhotoSize] = []
 
             for p in photo.sizes:
                 if isinstance(p, raw.types.PhotoSize):
@@ -93,10 +103,7 @@ class Photo(Object):
                 if isinstance(p, raw.types.PhotoSizeProgressive):
                     photos.append(
                         raw.types.PhotoSize(
-                            type=p.type,
-                            w=p.w,
-                            h=p.h,
-                            size=max(p.sizes)
+                            type=p.type, w=p.w, h=p.h, size=max(p.sizes)
                         )
                     )
 
@@ -115,11 +122,10 @@ class Photo(Object):
                     thumbnail_file_type=FileType.PHOTO,
                     thumbnail_size=main.type,
                     volume_id=0,
-                    local_id=0
+                    local_id=0,
                 ).encode(),
                 file_unique_id=FileUniqueId(
-                    file_unique_type=FileUniqueType.DOCUMENT,
-                    media_id=photo.id
+                    file_unique_type=FileUniqueType.DOCUMENT, media_id=photo.id
                 ).encode(),
                 width=main.w,
                 height=main.h,
@@ -127,5 +133,6 @@ class Photo(Object):
                 date=utils.timestamp_to_datetime(photo.date),
                 ttl_seconds=ttl_seconds,
                 thumbs=types.Thumbnail._parse(client, photo),
-                client=client
+                client=client,
             )
+        return None

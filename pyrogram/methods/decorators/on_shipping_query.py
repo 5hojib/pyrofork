@@ -15,11 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Callable, Optional, Union
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram.filters import Filter
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class OnShippingQuery:
@@ -45,7 +49,9 @@ class OnShippingQuery:
 
         def decorator(func: Callable) -> Callable:
             if isinstance(self, pyrogram.Client):
-                self.add_handler(pyrogram.handlers.ShippingQueryHandler(func, filters), group)
+                self.add_handler(
+                    pyrogram.handlers.ShippingQueryHandler(func, filters), group
+                )
             elif isinstance(self, Filter) or self is None:
                 if not hasattr(func, "handlers"):
                     func.handlers = []
@@ -53,7 +59,7 @@ class OnShippingQuery:
                 func.handlers.append(
                     (
                         pyrogram.handlers.ShippingQueryHandler(func, self),
-                        group if filters is None else filters
+                        group if filters is None else filters,
                     )
                 )
 

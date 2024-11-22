@@ -15,15 +15,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
-import pyrogram
+from typing import TYPE_CHECKING
 
-from datetime import datetime
+import pyrogram
 from pyrogram import raw, types, utils
 from pyrogram.errors import FloodWait
-from ..object import Object
-from typing import List
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class Giveaway(Object):
@@ -64,17 +67,17 @@ class Giveaway(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        chats: List["types.Chat"],
+        client: pyrogram.Client = None,
+        chats: list[types.Chat],
         quantity: int,
         expire_date: datetime,
-        new_subscribers : bool,
-        months: int = None,
-        stars: int = None,
-        additional_price: str = None,
-        allowed_countries: List[str] = None,
-        private_channel_ids: List[int] = None,
-        is_winners_hidden: bool = None
+        new_subscribers: bool,
+        months: int | None = None,
+        stars: int | None = None,
+        additional_price: str | None = None,
+        allowed_countries: list[str] | None = None,
+        private_channel_ids: list[int] | None = None,
+        is_winners_hidden: bool | None = None,
     ):
         super().__init__(client)
 
@@ -90,8 +93,8 @@ class Giveaway(Object):
         self.is_winners_hidden = is_winners_hidden
 
     @staticmethod
-    async def _parse(client, message: "raw.types.Message") -> "Giveaway":
-        giveaway: "raw.types.MessageMediaGiveaway" = message.media
+    async def _parse(client, message: raw.types.Message) -> Giveaway:
+        giveaway: raw.types.MessageMediaGiveaway = message.media
         chats = []
         private_ids = []
         for raw_chat_id in giveaway.channels:
@@ -117,8 +120,10 @@ class Giveaway(Object):
             expire_date=utils.timestamp_to_datetime(giveaway.until_date),
             new_subscribers=giveaway.only_new_subscribers,
             additional_price=giveaway.prize_description,
-            allowed_countries=giveaway.countries_iso2 if len(giveaway.countries_iso2) > 0 else None,
+            allowed_countries=giveaway.countries_iso2
+            if len(giveaway.countries_iso2) > 0
+            else None,
             private_channel_ids=private_ids if len(private_ids) > 0 else None,
             is_winners_hidden=not giveaway.winners_are_visible,
-            client=client
+            client=client,
         )

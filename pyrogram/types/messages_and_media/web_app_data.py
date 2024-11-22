@@ -16,9 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class WebAppData(Object):
@@ -45,8 +50,5 @@ class WebAppData(Object):
         self.button_text = button_text
 
     @staticmethod
-    def _parse(action: "raw.types.MessageActionWebViewDataSentMe"):
-        return WebAppData(
-            data=action.data,
-            button_text=action.text
-        )
+    def _parse(action: raw.types.MessageActionWebViewDataSentMe):
+        return WebAppData(data=action.data, button_text=action.text)

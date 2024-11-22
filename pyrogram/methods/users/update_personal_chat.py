@@ -15,16 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
 
-from typing import Union
 
 class UpdatePersonalChat:
     async def update_personal_chat(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str]
+        self: pyrogram.Client, chat_id: int | str
     ) -> bool:
         """Update your birthday details.
 
@@ -45,7 +44,7 @@ class UpdatePersonalChat:
                 await app.update_personal_chat(chat_id=-1001234567890)
         """
         chat = await self.resolve_peer(chat_id)
-        r = await self.invoke(raw.functions.account.UpdatePersonalChannel(channel=chat))
-        if r:
-            return True
-        return False
+        r = await self.invoke(
+            raw.functions.account.UpdatePersonalChannel(channel=chat)
+        )
+        return bool(r)

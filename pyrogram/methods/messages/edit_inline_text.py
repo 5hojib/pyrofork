@@ -16,25 +16,23 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw, enums
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import enums, raw, types, utils
+
 from .inline_session import get_session
 
 
 class EditInlineText:
     async def edit_inline_text(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         inline_message_id: str,
         text: str,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        disable_web_page_preview: bool = None,
-        reply_markup: "types.InlineKeyboardMarkup" = None,
-        invert_media: bool = None
+        parse_mode: enums.ParseMode | None = None,
+        disable_web_page_preview: bool | None = None,
+        reply_markup: types.InlineKeyboardMarkup = None,
+        invert_media: bool | None = None,
     ) -> bool:
         """Edit the text of inline messages.
 
@@ -87,9 +85,11 @@ class EditInlineText:
             raw.functions.messages.EditInlineBotMessage(
                 id=unpacked,
                 no_webpage=disable_web_page_preview or None,
-                reply_markup=await reply_markup.write(self) if reply_markup else None,
-                **await self.parser.parse(text, parse_mode)
+                reply_markup=await reply_markup.write(self)
+                if reply_markup
+                else None,
+                **await self.parser.parse(text, parse_mode),
             ),
             sleep_threshold=self.sleep_threshold,
-            invert_media=invert_media
+            invert_media=invert_media,
         )

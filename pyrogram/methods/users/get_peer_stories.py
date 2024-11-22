@@ -15,21 +15,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
-from typing import AsyncGenerator, Union, Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 log = logging.getLogger(__name__)
 
+
 class GetPeerStories:
     async def get_peer_stories(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str]
-    ) -> Optional[AsyncGenerator["types.Story", None]]:
+        self: pyrogram.Client, chat_id: int | str
+    ) -> AsyncGenerator[types.Story, None] | None:
         """Get all active stories from an user/channel by using user identifiers.
 
         .. include:: /_includes/usable-by/users.rst
@@ -56,7 +59,6 @@ class GetPeerStories:
         """
 
         peer = await self.resolve_peer(chat_id)
-
 
         rpc = raw.functions.stories.GetPeerStories(peer=peer)
 

@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from io import BytesIO
 from typing import Any
@@ -27,7 +28,7 @@ from .tl_object import TLObject
 class Message(TLObject):
     ID = 0x5BB8E511  # hex(crc32(b"message msg_id:long seqno:int bytes:int body:Object = Message"))
 
-    __slots__ = ["msg_id", "seq_no", "length", "body"]
+    __slots__ = ["body", "length", "msg_id", "seq_no"]
 
     QUALNAME = "Message"
 
@@ -38,7 +39,7 @@ class Message(TLObject):
         self.body = body
 
     @staticmethod
-    def read(data: BytesIO, *args: Any) -> "Message":
+    def read(data: BytesIO, *args: Any) -> Message:
         msg_id = Long.read(data)
         seq_no = Int.read(data)
         length = Int.read(data)

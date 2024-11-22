@@ -16,12 +16,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Optional, List, Union, BinaryIO
+from typing import TYPE_CHECKING, BinaryIO
 
 from .input_media import InputMedia
-from ..messages_and_media import MessageEntity
-from ... import enums
+
+if TYPE_CHECKING:
+    from pyrogram import enums
+    from pyrogram.types.messages_and_media import MessageEntity
 
 
 class InputMediaVideo(InputMedia):
@@ -71,16 +74,16 @@ class InputMediaVideo(InputMedia):
 
     def __init__(
         self,
-        media: Union[str, BinaryIO],
-        thumb: str = None,
+        media: str | BinaryIO,
+        thumb: str | None = None,
         caption: str = "",
-        parse_mode: Optional["enums.ParseMode"] = None,
-        caption_entities: List[MessageEntity] = None,
+        parse_mode: enums.ParseMode | None = None,
+        caption_entities: list[MessageEntity] | None = None,
         width: int = 0,
         height: int = 0,
         duration: int = 0,
         supports_streaming: bool = True,
-        has_spoiler: bool = None,
+        has_spoiler: bool | None = None,
     ):
         super().__init__(media, caption, parse_mode, caption_entities)
 

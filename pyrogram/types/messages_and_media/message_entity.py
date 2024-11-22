@@ -16,18 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw, enums
-from pyrogram import types
-from ..object import Object
+from pyrogram import enums, raw, types
+from pyrogram.types.object import Object
 
 
 class MessageEntity(Object):
     """One special entity in a text message.
-    
+
     For example, hashtags, usernames, URLs, etc.
 
     Parameters:
@@ -60,15 +58,15 @@ class MessageEntity(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        type: "enums.MessageEntityType",
+        client: pyrogram.Client = None,
+        type: enums.MessageEntityType,
         offset: int,
         length: int,
-        url: str = None,
-        user: "types.User" = None,
-        language: str = None,
-        custom_emoji_id: int = None,
-        collapsed: bool = None
+        url: str | None = None,
+        user: types.User = None,
+        language: str | None = None,
+        custom_emoji_id: int | None = None,
+        collapsed: bool | None = None,
     ):
         super().__init__(client)
 
@@ -82,7 +80,9 @@ class MessageEntity(Object):
         self.collapsed = collapsed
 
     @staticmethod
-    def _parse(client, entity: "raw.base.MessageEntity", users: dict) -> Optional["MessageEntity"]:
+    def _parse(
+        client, entity: raw.base.MessageEntity, users: dict
+    ) -> MessageEntity | None:
         # Special case for InputMessageEntityMentionName -> MessageEntityType.TEXT_MENTION
         # This happens in case of UpdateShortSentMessage inside send_message() where entities are parsed from the input
         if isinstance(entity, raw.types.InputMessageEntityMentionName):
@@ -97,11 +97,11 @@ class MessageEntity(Object):
             offset=entity.offset,
             length=entity.length,
             url=getattr(entity, "url", None),
-            user=types.User._parse(client, users.get(user_id, None)),
+            user=types.User._parse(client, users.get(user_id)),
             language=getattr(entity, "language", None),
             custom_emoji_id=getattr(entity, "document_id", None),
             collapsed=getattr(entity, "collapsed", None),
-            client=client
+            client=client,
         )
 
     async def write(self):
@@ -125,7 +125,7 @@ class MessageEntity(Object):
 
         if self.type not in [
             enums.MessageEntityType.BLOCKQUOTE,
-            enums.MessageEntityType.EXPANDABLE_BLOCKQUOTE
+            enums.MessageEntityType.EXPANDABLE_BLOCKQUOTE,
         ]:
             args.pop("collapsed")
 

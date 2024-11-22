@@ -15,10 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-from ..object import Object
-from typing import List, Union
+from pyrogram.types.object import Object
 
 
 class InputReplyToMessage(Object):
@@ -47,15 +47,13 @@ class InputReplyToMessage(Object):
     """
 
     def __init__(
-        self, *,
-        reply_to_message_id: int = None,
-        message_thread_id: int = None,
-        reply_to_chat: Union[
-            "raw.types.InputPeerChannel",
-            "raw.types.InputPeerUser"
-        ] = None,
-        quote_text: str = None,
-        quote_entities: List["raw.base.MessageEntity"] = None
+        self,
+        *,
+        reply_to_message_id: int | None = None,
+        message_thread_id: int | None = None,
+        reply_to_chat: raw.types.InputPeerChannel | raw.types.InputPeerUser = None,
+        quote_text: str | None = None,
+        quote_entities: list[raw.base.MessageEntity] | None = None,
     ):
         super().__init__()
 
@@ -82,6 +80,6 @@ class InputReplyToMessage(Object):
                 top_msg_id=top_msg_id,
                 reply_to_peer_id=self.reply_to_chat,
                 quote_text=self.quote_text,
-                quote_entities=self.quote_entities
+                quote_entities=self.quote_entities,
             ).write()
         return None

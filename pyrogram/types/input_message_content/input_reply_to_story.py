@@ -15,9 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class InputReplyToStory(Object):
@@ -33,9 +34,7 @@ class InputReplyToStory(Object):
     """
 
     def __init__(
-        self, *,
-        peer: "raw.types.InputPeer" = None,
-        story_id: int = None
+        self, *, peer: raw.types.InputPeer = None, story_id: int | None = None
     ):
         super().__init__()
 
@@ -44,6 +43,5 @@ class InputReplyToStory(Object):
 
     def write(self):
         return raw.types.InputReplyToStory(
-            peer=self.peer,
-            story_id=self.story_id
+            peer=self.peer, story_id=self.story_id
         ).write()

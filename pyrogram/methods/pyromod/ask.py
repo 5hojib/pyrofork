@@ -16,24 +16,28 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pyrogram
 
-from pyrogram.filters import Filter
-from typing import List, Optional, Union
+if TYPE_CHECKING:
+    from pyrogram.filters import Filter
+
 
 class Ask:
     async def ask(
-        self: "pyrogram.Client",
-        chat_id: Union[Union[int, str], List[Union[int, str]]],
+        self: pyrogram.Client,
+        chat_id: int | str | list[int | str],
         text: str,
-        filters: Optional[Filter] = None,
-        listener_type: "pyrogram.enums.ListenerTypes" = pyrogram.enums.ListenerTypes.MESSAGE,
-        timeout: Optional[int] = None,
+        filters: Filter | None = None,
+        listener_type: pyrogram.enums.ListenerTypes = pyrogram.enums.ListenerTypes.MESSAGE,
+        timeout: int | None = None,
         unallowed_click_alert: bool = True,
-        user_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        message_id: Union[int, List[int]] = None,
-        inline_message_id: Union[str, List[str]] = None,
+        user_id: int | str | list[int | str] | None = None,
+        message_id: int | list[int] | None = None,
+        inline_message_id: str | list[str] | None = None,
         *args,
         **kwargs,
     ):
@@ -85,7 +89,9 @@ class Ask:
         sent_message = None
         if text and isinstance(text, str):
             chat_to_ask = chat_id[0] if isinstance(chat_id, list) else chat_id
-            sent_message = await self.send_message(chat_to_ask, text, *args, **kwargs)
+            sent_message = await self.send_message(
+                chat_to_ask, text, *args, **kwargs
+            )
 
         response = await self.listen(
             filters=filters,

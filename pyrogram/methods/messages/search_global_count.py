@@ -16,16 +16,17 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw, enums
+from pyrogram import enums, raw
 
 
 class SearchGlobalCount:
     async def search_global_count(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         query: str = "",
-        filter: "enums.MessagesFilter" = enums.MessagesFilter.EMPTY,
+        filter: enums.MessagesFilter = enums.MessagesFilter.EMPTY,
     ) -> int:
         """Get the count of messages resulting from a global search.
 
@@ -53,11 +54,10 @@ class SearchGlobalCount:
                 offset_rate=0,
                 offset_peer=raw.types.InputPeerEmpty(),
                 offset_id=0,
-                limit=1
+                limit=1,
             )
         )
 
         if hasattr(r, "count"):
             return r.count
-        else:
-            return len(r.messages)
+        return len(r.messages)

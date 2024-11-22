@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
 
@@ -26,9 +27,7 @@ log = logging.getLogger(__name__)
 
 
 class Start:
-    async def start(
-        self: "pyrogram.Client"
-    ):
+    async def start(self: pyrogram.Client):
         """Start the client.
 
         This method connects the client to Telegram and, in case of new sessions, automatically manages the
@@ -63,7 +62,9 @@ class Start:
                 await self.authorize()
 
             if not await self.storage.is_bot() and self.takeout:
-                self.takeout_id = (await self.invoke(raw.functions.account.InitTakeoutSession())).id
+                self.takeout_id = (
+                    await self.invoke(raw.functions.account.InitTakeoutSession())
+                ).id
                 log.info("Takeout session %s initiated", self.takeout_id)
 
             await self.invoke(raw.functions.updates.GetState())

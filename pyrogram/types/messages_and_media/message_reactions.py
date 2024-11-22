@@ -16,12 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional, List, Dict
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw, types
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class MessageReactions(Object):
@@ -38,9 +37,9 @@ class MessageReactions(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        reactions: Optional[List["types.Reaction"]] = None,
-        top_reactors: Optional[List["types.MessageReactor"]] = None
+        client: pyrogram.Client = None,
+        reactions: list[types.Reaction] | None = None,
+        top_reactors: list[types.MessageReactor] | None = None,
     ):
         super().__init__(client)
 
@@ -49,10 +48,10 @@ class MessageReactions(Object):
 
     @staticmethod
     def _parse(
-        client: "pyrogram.Client",
-        message_reactions: Optional["raw.base.MessageReactions"] = None,
-        users: Optional[Dict[int, "raw.types.User"]] = None
-    ) -> Optional["MessageReactions"]:
+        client: pyrogram.Client,
+        message_reactions: raw.base.MessageReactions | None = None,
+        users: dict[int, raw.types.User] | None = None,
+    ) -> MessageReactions | None:
         if not message_reactions:
             return None
 
@@ -65,5 +64,5 @@ class MessageReactions(Object):
             top_reactors=[
                 types.MessageReactor._parse(client, reactor, users)
                 for reactor in message_reactions.top_reactors
-            ]
+            ],
         )

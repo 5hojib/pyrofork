@@ -16,25 +16,27 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Union, List, Optional
+from typing import TYPE_CHECKING
 
-import pyrogram
-from pyrogram import types, enums
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram import enums, types
 
 
 class EditMessageCaption:
     async def edit_message_caption(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: int,
         caption: str,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        caption_entities: List["types.MessageEntity"] = None,
+        parse_mode: enums.ParseMode | None = None,
+        caption_entities: list[types.MessageEntity] | None = None,
         invert_media: bool = False,
-        reply_markup: "types.InlineKeyboardMarkup" = None,
-        business_connection_id: str = None
-    ) -> "types.Message":
+        reply_markup: types.InlineKeyboardMarkup = None,
+        business_connection_id: str | None = None,
+    ) -> types.Message:
         """Edit the caption of media messages.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -85,5 +87,5 @@ class EditMessageCaption:
             entities=caption_entities,
             invert_media=invert_media,
             reply_markup=reply_markup,
-            business_connection_id=business_connection_id
+            business_connection_id=business_connection_id,
         )

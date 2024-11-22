@@ -16,13 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Dict
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram import raw, types, utils
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class ChatJoiner(Object):
@@ -48,12 +51,12 @@ class ChatJoiner(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client",
-        user: "types.User",
-        date: datetime = None,
-        bio: str = None,
-        pending: bool = None,
-        approved_by: "types.User" = None,
+        client: pyrogram.Client,
+        user: types.User,
+        date: datetime | None = None,
+        bio: str | None = None,
+        pending: bool | None = None,
+        approved_by: types.User = None,
     ):
         super().__init__(client)
 
@@ -65,10 +68,10 @@ class ChatJoiner(Object):
 
     @staticmethod
     def _parse(
-        client: "pyrogram.Client",
-        joiner: "raw.base.ChatInviteImporter",
-        users: Dict[int, "raw.base.User"],
-    ) -> "ChatJoiner":
+        client: pyrogram.Client,
+        joiner: raw.base.ChatInviteImporter,
+        users: dict[int, raw.base.User],
+    ) -> ChatJoiner:
         return ChatJoiner(
             user=types.User._parse(client, users[joiner.user_id]),
             date=utils.timestamp_to_datetime(joiner.date),
@@ -79,5 +82,5 @@ class ChatJoiner(Object):
                 if joiner.approved_by
                 else None
             ),
-            client=client
+            client=client,
         )

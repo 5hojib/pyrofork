@@ -15,20 +15,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
-from typing import AsyncGenerator, Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 log = logging.getLogger(__name__)
 
+
 class GetAllStories:
     async def get_all_stories(
-        self: "pyrogram.Client"
-    ) -> Optional[AsyncGenerator["types.Story", None]]:
+        self: pyrogram.Client,
+    ) -> AsyncGenerator[types.Story, None] | None:
         """Get all active stories.
 
         .. include:: /_includes/usable-by/users.rst

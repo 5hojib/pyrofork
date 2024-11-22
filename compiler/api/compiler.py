@@ -16,14 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
+import contextlib
 import json
 import os
 import re
 import shutil
 from functools import partial
 from pathlib import Path
-from typing import NamedTuple, List, Tuple
+from typing import NamedTuple
 
 # from autoflake import fix_code
 # from black import format_str, FileMode
@@ -34,14 +36,26 @@ NOTICE_PATH = "NOTICE"
 
 SECTION_RE = re.compile(r"---(\w+)---")
 LAYER_RE = re.compile(r"//\sLAYER\s(\d+)")
-COMBINATOR_RE = re.compile(r"^([\w.]+)#([0-9a-f]+)\s(?:.*)=\s([\w<>.]+);$", re.MULTILINE)
+COMBINATOR_RE = re.compile(
+    r"^([\w.]+)#([0-9a-f]+)\s(?:.*)=\s([\w<>.]+);$", re.MULTILINE
+)
 ARGS_RE = re.compile(r"[^{](\w+):([\w?!.<>#]+)")
 FLAGS_RE = re.compile(r"flags(\d?)\.(\d+)\?")
 FLAGS_RE_2 = re.compile(r"flags(\d?)\.(\d+)\?([\w<>.]+)")
 FLAGS_RE_3 = re.compile(r"flags(\d?):#")
 INT_RE = re.compile(r"int(\d+)")
 
-CORE_TYPES = ["int", "long", "int128", "int256", "double", "bytes", "string", "Bool", "true"]
+CORE_TYPES = [
+    "int",
+    "long",
+    "int128",
+    "int256",
+    "double",
+    "bytes",
+    "string",
+    "Bool",
+    "true",
+]
 
 WARNING = """
 # # # # # # # # # # # # # # # # # # # # # # # #
@@ -65,11 +79,7 @@ try:
     with open("docs.json") as f:
         docs = json.load(f)
 except FileNotFoundError:
-    docs = {
-        "type": {},
-        "constructor": {},
-        "method": {}
-    }
+    docs = {"type": {}, "constructor": {}, "method": {}}
 
 
 class Combinator(NamedTuple):
@@ -79,7 +89,7 @@ class Combinator(NamedTuple):
     name: str
     id: str
     has_flags: bool
-    args: List[Tuple[str, str]]
+    args: list[tuple[str, str]]
     qualtype: str
     typespace: str
     type: str
@@ -120,7 +130,7 @@ def get_type_hint(type: str) -> str:
     if type in ["Object", "!X"]:
         return "TLObject"
 
-    if re.match("^vector", type, re.I):
+    if re.match("^vector", type, re.IGNORECASE):
         is_core = True
 
         sub_type = type.split("<")[1][:-1]
@@ -128,11 +138,10 @@ def get_type_hint(type: str) -> str:
 
     if is_core:
         return f"Optional[{type}] = None" if is_flag else type
-    else:
-        ns, name = type.split(".") if "." in type else ("", type)
-        type = f'"raw.base.' + ".".join([ns, name]).strip(".") + '"'
+    ns, name = type.split(".") if "." in type else ("", type)
+    type = '"raw.base.' + ".".join([ns, name]).strip(".") + '"'
 
-        return f'{type}{" = None" if is_flag else ""}'
+    return f'{type}{" = None" if is_flag else ""}'
 
 
 def sort_args(args):
@@ -165,25 +174,25 @@ def get_docstring_arg_type(t: str):
     if t in CORE_TYPES:
         if t == "long":
             return "``int`` ``64-bit``"
-        elif "int" in t:
+        if "int" in t:
             size = INT_RE.match(t)
-            return f"``int`` ``{size.group(1)}-bit``" if size else "``int`` ``32-bit``"
-        elif t == "double":
+            return (
+                f"``int`` ``{size.group(1)}-bit``" if size else "``int`` ``32-bit``"
+            )
+        if t == "double":
             return "``float`` ``64-bit``"
-        elif t == "string":
+        if t == "string":
             return "``str``"
-        elif t == "true":
+        if t == "true":
             return "``bool``"
-        else:
-            return f"``{t.lower()}``"
-    elif t == "TLObject" or t == "X":
+        return f"``{t.lower()}``"
+    if t in ("TLObject", "X"):
         return "Any object from :obj:`~pyrogram.raw.types`"
-    elif t == "!X":
+    if t == "!X":
         return "Any function from :obj:`~pyrogram.raw.functions`"
-    elif t.lower().startswith("vector"):
+    if t.lower().startswith("vector"):
         return "List of " + get_docstring_arg_type(t.split("<", 1)[1][:-1])
-    else:
-        return f":obj:`{t} <pyrogram.raw.base.{t}>`"
+    return f":obj:`{t} <pyrogram.raw.base.{t}>`"
 
 
 def get_references(t: str, kind: str):
@@ -206,13 +215,17 @@ def start(format: bool = False):
     shutil.rmtree(DESTINATION_PATH / "functions", ignore_errors=True)
     shutil.rmtree(DESTINATION_PATH / "base", ignore_errors=True)
 
-    with open(HOME_PATH / "source/auth_key.tl") as f1, \
-        open(HOME_PATH / "source/sys_msgs.tl") as f2, \
-        open(HOME_PATH / "source/main_api.tl") as f3:
+    with (
+        open(HOME_PATH / "source/auth_key.tl") as f1,
+        open(HOME_PATH / "source/sys_msgs.tl") as f2,
+        open(HOME_PATH / "source/main_api.tl") as f3,
+    ):
         schema = (f1.read() + f2.read() + f3.read()).splitlines()
 
-    with open(HOME_PATH / "template/type.txt") as f1, \
-        open(HOME_PATH / "template/combinator.txt") as f2:
+    with (
+        open(HOME_PATH / "template/type.txt") as f1,
+        open(HOME_PATH / "template/combinator.txt") as f2,
+    ):
         type_tmpl = f1.read()
         combinator_tmpl = f2.read()
 
@@ -246,16 +259,20 @@ def start(format: bool = False):
             # noinspection PyShadowingBuiltins
             qualname, id, qualtype = combinator_match.groups()
 
-            namespace, name = qualname.split(".") if "." in qualname else ("", qualname)
+            namespace, name = (
+                qualname.split(".") if "." in qualname else ("", qualname)
+            )
             name = camel(name)
             qualname = ".".join([namespace, name]).lstrip(".")
 
-            typespace, type = qualtype.split(".") if "." in qualtype else ("", qualtype)
+            typespace, type = (
+                qualtype.split(".") if "." in qualtype else ("", qualtype)
+            )
             type = camel(type)
             qualtype = ".".join([typespace, type]).lstrip(".")
 
             # Pingu!
-            has_flags = not not FLAGS_RE_3.findall(line)
+            has_flags = bool(FLAGS_RE_3.findall(line))
 
             args = ARGS_RE.findall(line)
 
@@ -277,7 +294,7 @@ def start(format: bool = False):
                 args=args,
                 qualtype=qualtype,
                 typespace=typespace,
-                type=type
+                type=type,
             )
 
             combinators.append(combinator)
@@ -306,10 +323,8 @@ def start(format: bool = False):
 
     for k, v in types_to_constructors.items():
         for i in v:
-            try:
+            with contextlib.suppress(KeyError):
                 constructors_to_functions[i] = types_to_functions[k]
-            except KeyError:
-                pass
 
     # import json
     # print(json.dumps(namespaces_to_types, indent=2))
@@ -331,29 +346,30 @@ def start(format: bool = False):
 
         type_docs = docs["type"].get(qualtype, None)
 
-        if type_docs:
-            type_docs = type_docs["desc"]
-        else:
-            type_docs = "Telegram API base type."
+        type_docs = type_docs["desc"] if type_docs else "Telegram API base type."
 
         docstring = type_docs
 
-        docstring += f"\n\n    Constructors:\n" \
-                     f"        This base type has {constr_count} constructor{'s' if constr_count > 1 else ''} available.\n\n" \
-                     f"        .. currentmodule:: pyrogram.raw.types\n\n" \
-                     f"        .. autosummary::\n" \
-                     f"            :nosignatures:\n\n" \
-                     f"            {items}"
+        docstring += (
+            f"\n\n    Constructors:\n"
+            f"        This base type has {constr_count} constructor{'s' if constr_count > 1 else ''} available.\n\n"
+            f"        .. currentmodule:: pyrogram.raw.types\n\n"
+            f"        .. autosummary::\n"
+            f"            :nosignatures:\n\n"
+            f"            {items}"
+        )
 
         references, ref_count = get_references(qualtype, "types")
 
         if references:
-            docstring += f"\n\n    Functions:\n        This object can be returned by " \
-                         f"{ref_count} function{'s' if ref_count > 1 else ''}.\n\n" \
-                         f"        .. currentmodule:: pyrogram.raw.functions\n\n" \
-                         f"        .. autosummary::\n" \
-                         f"            :nosignatures:\n\n" \
-                         f"            " + references
+            docstring += (
+                f"\n\n    Functions:\n        This object can be returned by "
+                f"{ref_count} function{'s' if ref_count > 1 else ''}.\n\n"
+                f"        .. currentmodule:: pyrogram.raw.functions\n\n"
+                f"        .. autosummary::\n"
+                f"            :nosignatures:\n\n"
+                f"            " + references
+            )
 
         with open(dir_path / f"{snake(module)}.py", "w") as f:
             f.write(
@@ -364,25 +380,26 @@ def start(format: bool = False):
                     name=type,
                     qualname=qualtype,
                     types=", ".join([f"raw.types.{c}" for c in constructors]),
-                    doc_name=snake(type).replace("_", "-")
+                    doc_name=snake(type).replace("_", "-"),
                 )
             )
 
     for c in combinators:
         sorted_args = sort_args(c.args)
 
-        arguments = (
-            (", *, " if c.args else "") +
-            (", ".join(
-                [f"{i[0]}: {get_type_hint(i[1])}"
-                 for i in sorted_args]
-            ) if sorted_args else "")
+        arguments = (", *, " if c.args else "") + (
+            ", ".join([f"{i[0]}: {get_type_hint(i[1])}" for i in sorted_args])
+            if sorted_args
+            else ""
         )
 
-        fields = "\n        ".join(
-            [f"self.{i[0]} = {i[0]}  # {i[1]}"
-             for i in sorted_args]
-        ) if sorted_args else "pass"
+        fields = (
+            "\n        ".join(
+                [f"self.{i[0]} = {i[0]}  # {i[1]}" for i in sorted_args]
+            )
+            if sorted_args
+            else "pass"
+        )
 
         docstring = ""
         docstring_args = []
@@ -395,22 +412,19 @@ def start(format: bool = False):
         for i, arg in enumerate(sorted_args):
             arg_name, arg_type = arg
             is_optional = FLAGS_RE.match(arg_type)
-            flag_number = is_optional.group(1) if is_optional else -1
+            is_optional.group(1) if is_optional else -1
             arg_type = arg_type.split("?")[-1]
 
             arg_docs = combinator_docs.get(c.qualname, None)
 
-            if arg_docs:
-                arg_docs = arg_docs["params"].get(arg_name, "N/A")
-            else:
-                arg_docs = "N/A"
+            arg_docs = arg_docs["params"].get(arg_name, "N/A") if arg_docs else "N/A"
 
             docstring_args.append(
                 "{} ({}{}):\n            {}\n".format(
                     arg_name,
                     get_docstring_arg_type(arg_type),
-                    ", *optional*".format(flag_number) if is_optional else "",
-                    arg_docs
+                    ", *optional*".format() if is_optional else "",
+                    arg_docs,
                 )
             )
 
@@ -423,31 +437,40 @@ def start(format: bool = False):
                 constructor_docs = "Telegram API type."
 
             docstring += constructor_docs + "\n"
-            docstring += f"\n    Constructor of :obj:`~pyrogram.raw.base.{c.qualtype}`."
+            docstring += (
+                f"\n    Constructor of :obj:`~pyrogram.raw.base.{c.qualtype}`."
+            )
         else:
             function_docs = docs["method"].get(c.qualname, None)
 
             if function_docs:
                 docstring += function_docs["desc"] + "\n"
             else:
-                docstring += f"Telegram API function."
+                docstring += "Telegram API function."
 
         docstring += f"\n\n    Details:\n        - Layer: ``{layer}``\n        - ID: ``{c.id[2:].upper()}``\n\n"
-        docstring += f"    Parameters:\n        " + \
-                     (f"\n        ".join(docstring_args) if docstring_args else "No parameters required.\n")
+        docstring += "    Parameters:\n        " + (
+            "\n        ".join(docstring_args)
+            if docstring_args
+            else "No parameters required.\n"
+        )
 
         if c.section == "functions":
-            docstring += "\n    Returns:\n        " + get_docstring_arg_type(c.qualtype)
+            docstring += "\n    Returns:\n        " + get_docstring_arg_type(
+                c.qualtype
+            )
         else:
             references, count = get_references(c.qualname, "constructors")
 
             if references:
-                docstring += f"\n    Functions:\n        This object can be returned by " \
-                             f"{count} function{'s' if count > 1 else ''}.\n\n" \
-                             f"        .. currentmodule:: pyrogram.raw.functions\n\n" \
-                             f"        .. autosummary::\n" \
-                             f"            :nosignatures:\n\n" \
-                             f"            " + references
+                docstring += (
+                    f"\n    Functions:\n        This object can be returned by "
+                    f"{count} function{'s' if count > 1 else ''}.\n\n"
+                    f"        .. currentmodule:: pyrogram.raw.functions\n\n"
+                    f"        .. autosummary::\n"
+                    f"            :nosignatures:\n\n"
+                    f"            " + references
+                )
 
         write_types = read_types = "" if c.has_flags else "# No flags\n        "
 
@@ -464,17 +487,24 @@ def start(format: bool = False):
                         if arg_name != f"flags{flag.group(1)}":
                             continue
 
-                        if flag.group(3) == "true" or flag.group(3).startswith("Vector"):
-                            write_flags.append(f"{arg_name} |= (1 << {flag.group(2)}) if self.{i[0]} else 0")
+                        if flag.group(3) == "true" or flag.group(3).startswith(
+                            "Vector"
+                        ):
+                            write_flags.append(
+                                f"{arg_name} |= (1 << {flag.group(2)}) if self.{i[0]} else 0"
+                            )
                         else:
                             write_flags.append(
-                                f"{arg_name} |= (1 << {flag.group(2)}) if self.{i[0]} is not None else 0")
+                                f"{arg_name} |= (1 << {flag.group(2)}) if self.{i[0]} is not None else 0"
+                            )
 
-                write_flags = "\n        ".join([
-                    f"{arg_name} = 0",
-                    "\n        ".join(write_flags),
-                    f"b.write(Int({arg_name}))\n        "
-                ])
+                write_flags = "\n        ".join(
+                    [
+                        f"{arg_name} = 0",
+                        "\n        ".join(write_flags),
+                        f"b.write(Int({arg_name}))\n        ",
+                    ]
+                )
 
                 write_types += write_flags
                 read_types += f"\n        {arg_name} = Int.read(b)\n        "
@@ -490,7 +520,9 @@ def start(format: bool = False):
                 elif flag_type in CORE_TYPES:
                     write_types += "\n        "
                     write_types += f"if self.{arg_name} is not None:\n            "
-                    write_types += f"b.write({flag_type.title()}(self.{arg_name}))\n        "
+                    write_types += (
+                        f"b.write({flag_type.title()}(self.{arg_name}))\n        "
+                    )
 
                     read_types += "\n        "
                     read_types += f"{arg_name} = {flag_type.title()}.read(b) if flags{number} & (1 << {index}) else None"
@@ -500,12 +532,16 @@ def start(format: bool = False):
                     write_types += "\n        "
                     write_types += f"if self.{arg_name} is not None:\n            "
                     write_types += "b.write(Vector(self.{}{}))\n        ".format(
-                        arg_name, f", {sub_type.title()}" if sub_type in CORE_TYPES else ""
+                        arg_name,
+                        f", {sub_type.title()}" if sub_type in CORE_TYPES else "",
                     )
 
                     read_types += "\n        "
                     read_types += "{} = TLObject.read(b{}) if flags{} & (1 << {}) else []\n        ".format(
-                        arg_name, f", {sub_type.title()}" if sub_type in CORE_TYPES else "", number, index
+                        arg_name,
+                        f", {sub_type.title()}" if sub_type in CORE_TYPES else "",
+                        number,
+                        index,
                     )
                 else:
                     write_types += "\n        "
@@ -514,31 +550,34 @@ def start(format: bool = False):
 
                     read_types += "\n        "
                     read_types += f"{arg_name} = TLObject.read(b) if flags{number} & (1 << {index}) else None\n        "
+            elif arg_type in CORE_TYPES:
+                write_types += "\n        "
+                write_types += (
+                    f"b.write({arg_type.title()}(self.{arg_name}))\n        "
+                )
+
+                read_types += "\n        "
+                read_types += f"{arg_name} = {arg_type.title()}.read(b)\n        "
+            elif "vector" in arg_type.lower():
+                sub_type = arg_type.split("<")[1][:-1]
+
+                write_types += "\n        "
+                write_types += "b.write(Vector(self.{}{}))\n        ".format(
+                    arg_name,
+                    f", {sub_type.title()}" if sub_type in CORE_TYPES else "",
+                )
+
+                read_types += "\n        "
+                read_types += "{} = TLObject.read(b{})\n        ".format(
+                    arg_name,
+                    f", {sub_type.title()}" if sub_type in CORE_TYPES else "",
+                )
             else:
-                if arg_type in CORE_TYPES:
-                    write_types += "\n        "
-                    write_types += f"b.write({arg_type.title()}(self.{arg_name}))\n        "
+                write_types += "\n        "
+                write_types += f"b.write(self.{arg_name}.write())\n        "
 
-                    read_types += "\n        "
-                    read_types += f"{arg_name} = {arg_type.title()}.read(b)\n        "
-                elif "vector" in arg_type.lower():
-                    sub_type = arg_type.split("<")[1][:-1]
-
-                    write_types += "\n        "
-                    write_types += "b.write(Vector(self.{}{}))\n        ".format(
-                        arg_name, f", {sub_type.title()}" if sub_type in CORE_TYPES else ""
-                    )
-
-                    read_types += "\n        "
-                    read_types += "{} = TLObject.read(b{})\n        ".format(
-                        arg_name, f", {sub_type.title()}" if sub_type in CORE_TYPES else ""
-                    )
-                else:
-                    write_types += "\n        "
-                    write_types += f"b.write(self.{arg_name}.write())\n        "
-
-                    read_types += "\n        "
-                    read_types += f"{arg_name} = TLObject.read(b)\n        "
+                read_types += "\n        "
+                read_types += f"{arg_name} = TLObject.read(b)\n        "
 
         slots = ", ".join([f'"{i[0]}"' for i in sorted_args])
         return_arguments = ", ".join([f"{i[0]}={i[0]}" for i in sorted_args])
@@ -555,7 +594,7 @@ def start(format: bool = False):
             fields=fields,
             read_types=read_types,
             write_types=write_types,
-            return_arguments=return_arguments
+            return_arguments=return_arguments,
         )
 
         directory = "types" if c.section == "types" else c.section
@@ -572,7 +611,11 @@ def start(format: bool = False):
         with open(dir_path / f"{snake(module)}.py", "w") as f:
             f.write(compiled_combinator)
 
-        d = namespaces_to_constructors if c.section == "types" else namespaces_to_functions
+        d = (
+            namespaces_to_constructors
+            if c.section == "types"
+            else namespaces_to_functions
+        )
 
         if c.namespace not in d:
             d[c.namespace] = []
@@ -593,7 +636,9 @@ def start(format: bool = False):
                 f.write(f"from .{snake(module)} import {t}\n")
 
             if not namespace:
-                f.write(f"from . import {', '.join(filter(bool, namespaces_to_types))}")
+                f.write(
+                    f"from . import {', '.join(filter(bool, namespaces_to_types))}"
+                )
 
     for namespace, types in namespaces_to_constructors.items():
         with open(DESTINATION_PATH / "types" / namespace / "__init__.py", "w") as f:
@@ -609,10 +654,14 @@ def start(format: bool = False):
                 f.write(f"from .{snake(module)} import {t}\n")
 
             if not namespace:
-                f.write(f"from . import {', '.join(filter(bool, namespaces_to_constructors))}\n")
+                f.write(
+                    f"from . import {', '.join(filter(bool, namespaces_to_constructors))}\n"
+                )
 
     for namespace, types in namespaces_to_functions.items():
-        with open(DESTINATION_PATH / "functions" / namespace / "__init__.py", "w") as f:
+        with open(
+            DESTINATION_PATH / "functions" / namespace / "__init__.py", "w"
+        ) as f:
             f.write(f"{notice}\n\n")
             f.write(f"{WARNING}\n\n")
 
@@ -625,7 +674,9 @@ def start(format: bool = False):
                 f.write(f"from .{snake(module)} import {t}\n")
 
             if not namespace:
-                f.write(f"from . import {', '.join(filter(bool, namespaces_to_functions))}")
+                f.write(
+                    f"from . import {', '.join(filter(bool, namespaces_to_functions))}"
+                )
 
     with open(DESTINATION_PATH / "all.py", "w", encoding="utf-8") as f:
         f.write(notice + "\n\n")
@@ -648,8 +699,8 @@ def start(format: bool = False):
         f.write("\n}\n")
 
 
-if "__main__" == __name__:
-    HOME_PATH = Path(".")
+if __name__ == "__main__":
+    HOME_PATH = Path()
     DESTINATION_PATH = Path("../../pyrogram/raw")
     NOTICE_PATH = Path("../../NOTICE")
 

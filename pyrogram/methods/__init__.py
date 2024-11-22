@@ -16,22 +16,23 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .advanced import Advanced
 from .auth import Auth
 from .bots import Bots
+from .business import TelegramBusiness
 from .chats import Chats
 from .contacts import Contacts
 from .decorators import Decorators
 from .invite_links import InviteLinks
 from .messages import Messages
 from .password import Password
+from .payments import Payments
 from .pyromod import Pyromod
 from .stickers import Stickers
-from .payments import Payments
 from .users import Users
 from .utilities import Utilities
-from .business import TelegramBusiness
 
 
 class Methods(

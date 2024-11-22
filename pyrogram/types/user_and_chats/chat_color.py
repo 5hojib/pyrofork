@@ -15,12 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Optional, Union
-
-from pyrogram import raw
-from pyrogram import enums
-from ..object import Object
+from pyrogram import enums, raw
+from pyrogram.types.object import Object
 
 
 class ChatColor(Object):
@@ -37,28 +35,32 @@ class ChatColor(Object):
     def __init__(
         self,
         *,
-        color: Union["enums.ReplyColor", "enums.ProfileColor"] = None,
-        background_emoji_id: int = None
+        color: enums.ReplyColor | enums.ProfileColor = None,
+        background_emoji_id: int | None = None,
     ):
         self.color = color
         self.background_emoji_id = background_emoji_id
 
     @staticmethod
-    def _parse(color: "raw.types.PeerColor" = None) -> Optional["ChatColor"]:
+    def _parse(color: raw.types.PeerColor = None) -> ChatColor | None:
         if not color:
             return None
 
         return ChatColor(
-            color=enums.ReplyColor(color.color) if getattr(color, "color", None) else None,
-            background_emoji_id=getattr(color, "background_emoji_id", None)
+            color=enums.ReplyColor(color.color)
+            if getattr(color, "color", None)
+            else None,
+            background_emoji_id=getattr(color, "background_emoji_id", None),
         )
 
     @staticmethod
-    def _parse_profile_color(color: "raw.types.PeerColor" = None) -> Optional["ChatColor"]:
+    def _parse_profile_color(color: raw.types.PeerColor = None) -> ChatColor | None:
         if not color:
             return None
 
         return ChatColor(
-            color=enums.ProfileColor(color.color) if getattr(color, "color", None) else None,
-            background_emoji_id=getattr(color, "background_emoji_id", None)
+            color=enums.ProfileColor(color.color)
+            if getattr(color, "color", None)
+            else None,
+            background_emoji_id=getattr(color, "background_emoji_id", None),
         )

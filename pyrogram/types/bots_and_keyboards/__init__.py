@@ -16,13 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .bot_allowed import BotAllowed
 from .bot_app import BotApp
 from .bot_business_connection import BotBusinessConnection
 from .bot_command import BotCommand
 from .bot_command_scope import BotCommandScope
-from .bot_command_scope_all_chat_administrators import BotCommandScopeAllChatAdministrators
+from .bot_command_scope_all_chat_administrators import (
+    BotCommandScopeAllChatAdministrators,
+)
 from .bot_command_scope_all_group_chats import BotCommandScopeAllGroupChats
 from .bot_command_scope_all_private_chats import BotCommandScopeAllPrivateChats
 from .bot_command_scope_chat import BotCommandScopeChat
@@ -36,9 +39,9 @@ from .collectible_item_info import CollectibleItemInfo
 from .force_reply import ForceReply
 from .game_high_score import GameHighScore
 from .inline_keyboard_button import InlineKeyboardButton
+from .inline_keyboard_button_buy import InlineKeyboardButtonBuy
 from .inline_keyboard_markup import InlineKeyboardMarkup
 from .keyboard_button import KeyboardButton
-from .inline_keyboard_button_buy import InlineKeyboardButtonBuy
 from .login_url import LoginUrl
 from .menu_button import MenuButton
 from .menu_button_commands import MenuButtonCommands
@@ -59,24 +62,6 @@ __all__ = [
     "BotAllowed",
     "BotApp",
     "BotBusinessConnection",
-    "CallbackGame",
-    "CallbackQuery",
-    "CollectibleItemInfo",
-    "ForceReply",
-    "GameHighScore",
-    "InlineKeyboardButton",
-    "InlineKeyboardButtonBuy",
-    "InlineKeyboardMarkup",
-    "KeyboardButton",
-    "ReplyKeyboardMarkup",
-    "ReplyKeyboardRemove",
-    "RequestPeerTypeChannel",
-    "RequestPeerTypeChat",
-    "RequestPeerTypeUser",
-    "RequestedChats",
-    "RequestedChat",
-    "RequestedUser",
-    "LoginUrl",
     "BotCommand",
     "BotCommandScope",
     "BotCommandScopeAllChatAdministrators",
@@ -87,10 +72,28 @@ __all__ = [
     "BotCommandScopeChatMember",
     "BotCommandScopeDefault",
     "BotInfo",
-    "WebAppInfo",
+    "CallbackGame",
+    "CallbackQuery",
+    "CollectibleItemInfo",
+    "ForceReply",
+    "GameHighScore",
+    "InlineKeyboardButton",
+    "InlineKeyboardButtonBuy",
+    "InlineKeyboardMarkup",
+    "KeyboardButton",
+    "LoginUrl",
     "MenuButton",
     "MenuButtonCommands",
-    "MenuButtonWebApp",
     "MenuButtonDefault",
-    "SentWebAppMessage"
+    "MenuButtonWebApp",
+    "ReplyKeyboardMarkup",
+    "ReplyKeyboardRemove",
+    "RequestPeerTypeChannel",
+    "RequestPeerTypeChat",
+    "RequestPeerTypeUser",
+    "RequestedChat",
+    "RequestedChats",
+    "RequestedUser",
+    "SentWebAppMessage",
+    "WebAppInfo",
 ]

@@ -16,17 +16,20 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
 import logging
 import signal
-from signal import signal as signal_fn, SIGINT, SIGTERM, SIGABRT
+from signal import SIGABRT, SIGINT, SIGTERM
+from signal import signal as signal_fn
 
 log = logging.getLogger(__name__)
 
 # Signal number to name
 signals = {
-    k: v for v, k in signal.__dict__.items()
+    k: v
+    for v, k in signal.__dict__.items()
     if v.startswith("SIG") and not v.startswith("SIG_")
 }
 

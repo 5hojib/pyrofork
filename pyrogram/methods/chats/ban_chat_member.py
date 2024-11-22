@@ -16,23 +16,25 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Union
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
+from pyrogram import raw, types, utils
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class BanChatMember:
     async def ban_chat_member(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        user_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
+        user_id: int | str,
         until_date: datetime = utils.zero_datetime(),
-        revoke_messages: bool = None
-    ) -> Union["types.Message", bool]:
+        revoke_messages: bool | None = None,
+    ) -> types.Message | bool:
         """Ban a user from a group, a supergroup or a channel.
         In the case of supergroups and channels, the user will not be able to return to the group on their own using
         invite links, etc., unless unbanned first. You must be an administrator in the chat for this to work and must
@@ -98,7 +100,7 @@ class BanChatMember:
                         send_inline=True,
                         embed_links=True,
                         manage_topics=True,
-                    )
+                    ),
                 )
             )
         else:
@@ -106,16 +108,18 @@ class BanChatMember:
                 raw.functions.messages.DeleteChatUser(
                     chat_id=abs(chat_id),
                     user_id=user_peer,
-                    revoke_history=revoke_messages
+                    revoke_history=revoke_messages,
                 )
             )
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateNewMessage, raw.types.UpdateNewChannelMessage)):
+            if isinstance(
+                i, raw.types.UpdateNewMessage | raw.types.UpdateNewChannelMessage
+            ):
                 return await types.Message._parse(
-                    self, i.message,
+                    self,
+                    i.message,
                     {i.id: i for i in r.users},
-                    {i.id: i for i in r.chats}
+                    {i.id: i for i in r.chats},
                 )
-        else:
-            return True
+        return True

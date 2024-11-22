@@ -16,14 +16,17 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Dict, Union
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram import enums, raw, types, utils
-from ..object import Object
-from ..update import Update
+from pyrogram.types.object import Object
+from pyrogram.types.update import Update
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class ChatMemberUpdated(Object, Update):
@@ -58,16 +61,16 @@ class ChatMemberUpdated(Object, Update):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        chat: "types.Chat",
-        from_user: "types.User",
+        client: pyrogram.Client = None,
+        chat: types.Chat,
+        from_user: types.User,
         date: datetime,
-        old_chat_member: "types.ChatMember",
-        new_chat_member: "types.ChatMember",
-        invite_link: "types.ChatInviteLink" = None,
-        via_join_request: bool = None,
+        old_chat_member: types.ChatMember,
+        new_chat_member: types.ChatMember,
+        invite_link: types.ChatInviteLink = None,
+        via_join_request: bool | None = None,
         via_chat_folder_invite_link: bool = False,
-        _raw: "raw.base.Update" = None
+        _raw: raw.base.Update = None,
     ):
         super().__init__(client)
 
@@ -83,22 +86,20 @@ class ChatMemberUpdated(Object, Update):
 
     @staticmethod
     def _parse(
-        client: "pyrogram.Client",
-        update: Union["raw.types.UpdateChatParticipant", "raw.types.UpdateChannelParticipant", "raw.types.UpdateBotStopped"],
-        users: Dict[int, "raw.types.User"],
-        chats: Dict[int, "raw.types.Chat"]
-    ) -> "ChatMemberUpdated":
+        client: pyrogram.Client,
+        update: raw.types.UpdateChatParticipant
+        | raw.types.UpdateChannelParticipant
+        | raw.types.UpdateBotStopped,
+        users: dict[int, raw.types.User],
+        chats: dict[int, raw.types.Chat],
+    ) -> ChatMemberUpdated:
         if isinstance(update, raw.types.UpdateBotStopped):
             from_user = types.User._parse(client, users[update.user_id])
             _chat_member_one = types.ChatMember(
-                user=from_user,
-                status=enums.ChatMemberStatus.BANNED,
-                client=client
+                user=from_user, status=enums.ChatMemberStatus.BANNED, client=client
             )
             _chat_member_two = types.ChatMember(
-                user=from_user,
-                status=enums.ChatMemberStatus.MEMBER,
-                client=client
+                user=from_user, status=enums.ChatMemberStatus.MEMBER, client=client
             )
             if update.stopped:
                 return ChatMemberUpdated(
@@ -107,7 +108,7 @@ class ChatMemberUpdated(Object, Update):
                     date=utils.timestamp_to_datetime(update.date),
                     old_chat_member=_chat_member_two,
                     new_chat_member=_chat_member_one,
-                    client=client
+                    client=client,
                 )
             return ChatMemberUpdated(
                 chat=types.Chat._parse_chat(client, users[update.user_id]),
@@ -115,7 +116,7 @@ class ChatMemberUpdated(Object, Update):
                 date=utils.timestamp_to_datetime(update.date),
                 old_chat_member=_chat_member_one,
                 new_chat_member=_chat_member_two,
-                client=client
+                client=client,
             )
 
         chat_id = getattr(update, "chat_id", None) or getattr(update, "channel_id")
@@ -126,10 +127,14 @@ class ChatMemberUpdated(Object, Update):
         via_join_request = None
 
         if update.prev_participant:
-            old_chat_member = types.ChatMember._parse(client, update.prev_participant, users, chats)
+            old_chat_member = types.ChatMember._parse(
+                client, update.prev_participant, users, chats
+            )
 
         if update.new_participant:
-            new_chat_member = types.ChatMember._parse(client, update.new_participant, users, chats)
+            new_chat_member = types.ChatMember._parse(
+                client, update.new_participant, users, chats
+            )
 
         if update.invite:
             invite_link = types.ChatInviteLink._parse(client, update.invite, users)
@@ -146,5 +151,5 @@ class ChatMemberUpdated(Object, Update):
             via_join_request=via_join_request,
             via_chat_folder_invite_link=getattr(update, "via_chatlist", False),
             _raw=update,
-            client=client
+            client=client,
         )

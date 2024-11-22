@@ -16,15 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pyrogram
 
 
 class Restart:
-    async def restart(
-        self: "pyrogram.Client",
-        block: bool = True
-    ):
+    async def restart(self: pyrogram.Client, block: bool = True):
         """Restart the Client.
 
         This method will first call :meth:`~pyrogram.Client.stop` and then :meth:`~pyrogram.Client.start` in a row in

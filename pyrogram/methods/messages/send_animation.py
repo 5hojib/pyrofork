@@ -16,58 +16,57 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import os
 import re
-from datetime import datetime
-from typing import Union, BinaryIO, List, Optional, Callable
+from typing import TYPE_CHECKING, BinaryIO
 
 import pyrogram
-from pyrogram import StopTransmission, enums
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import StopTransmission, enums, raw, types, utils
 from pyrogram.errors import FilePartMissing
 from pyrogram.file_id import FileType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from datetime import datetime
 
 
 class SendAnimation:
     async def send_animation(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        animation: Union[str, BinaryIO],
+        self: pyrogram.Client,
+        chat_id: int | str,
+        animation: str | BinaryIO,
         caption: str = "",
         unsave: bool = False,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        caption_entities: List["types.MessageEntity"] = None,
-        has_spoiler: bool = None,
+        parse_mode: enums.ParseMode | None = None,
+        caption_entities: list[types.MessageEntity] | None = None,
+        has_spoiler: bool | None = None,
         duration: int = 0,
         width: int = 0,
         height: int = 0,
-        thumb: Union[str, BinaryIO] = None,
-        file_name: str = None,
-        disable_notification: bool = None,
-        message_thread_id: int = None,
-        business_connection_id: str = None,
-        reply_to_message_id: int = None,
-        reply_to_story_id: int = None,
-        reply_to_chat_id: Union[int, str] = None,
-        quote_text: str = None,
-        quote_entities: List["types.MessageEntity"] = None,
-        schedule_date: datetime = None,
-        protect_content: bool = None,
-        allow_paid_broadcast: bool = None,
-        message_effect_id: int = None,
-        invert_media: bool = None,
-        reply_markup: Union[
-            "types.InlineKeyboardMarkup",
-            "types.ReplyKeyboardMarkup",
-            "types.ReplyKeyboardRemove",
-            "types.ForceReply"
-        ] = None,
-        progress: Callable = None,
-        progress_args: tuple = ()
-    ) -> Optional["types.Message"]:
+        thumb: str | BinaryIO | None = None,
+        file_name: str | None = None,
+        disable_notification: bool | None = None,
+        message_thread_id: int | None = None,
+        business_connection_id: str | None = None,
+        reply_to_message_id: int | None = None,
+        reply_to_story_id: int | None = None,
+        reply_to_chat_id: int | str | None = None,
+        quote_text: str | None = None,
+        quote_entities: list[types.MessageEntity] | None = None,
+        schedule_date: datetime | None = None,
+        protect_content: bool | None = None,
+        allow_paid_broadcast: bool | None = None,
+        message_effect_id: int | None = None,
+        invert_media: bool | None = None,
+        reply_markup: types.InlineKeyboardMarkup
+        | types.ReplyKeyboardMarkup
+        | types.ReplyKeyboardRemove
+        | types.ForceReply = None,
+        progress: Callable | None = None,
+        progress_args: tuple = (),
+    ) -> types.Message | None:
         """Send animation files (animation or H.264/MPEG-4 AVC video without sound).
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -136,7 +135,7 @@ class SendAnimation:
 
             reply_to_message_id (``int``, *optional*):
                 If the message is a reply, ID of the original message.
-            
+
             reply_to_story_id (``int``, *optional*):
                 Unique identifier for the target story.
 
@@ -228,14 +227,16 @@ class SendAnimation:
             reply_to_chat_id=reply_to_chat_id,
             quote_text=quote_text,
             quote_entities=quote_entities,
-            parse_mode=parse_mode
+            parse_mode=parse_mode,
         )
 
         try:
             if isinstance(animation, str):
                 if os.path.isfile(animation):
                     thumb = await self.save_file(thumb)
-                    file = await self.save_file(animation, progress=progress, progress_args=progress_args)
+                    file = await self.save_file(
+                        animation, progress=progress, progress_args=progress_args
+                    )
                     media = raw.types.InputMediaUploadedDocument(
                         mime_type=self.guess_mime_type(animation) or "video/mp4",
                         file=file,
@@ -246,25 +247,31 @@ class SendAnimation:
                                 supports_streaming=True,
                                 duration=duration,
                                 w=width,
-                                h=height
+                                h=height,
                             ),
-                            raw.types.DocumentAttributeFilename(file_name=file_name or os.path.basename(animation)),
-                            raw.types.DocumentAttributeAnimated()
-                        ]
+                            raw.types.DocumentAttributeFilename(
+                                file_name=file_name or os.path.basename(animation)
+                            ),
+                            raw.types.DocumentAttributeAnimated(),
+                        ],
                     )
                 elif re.match("^https?://", animation):
                     media = raw.types.InputMediaDocumentExternal(
-                        url=animation,
-                        spoiler=has_spoiler
+                        url=animation, spoiler=has_spoiler
                     )
                 else:
-                    media = utils.get_input_media_from_file_id(animation, FileType.ANIMATION)
+                    media = utils.get_input_media_from_file_id(
+                        animation, FileType.ANIMATION
+                    )
                     media.spoiler = has_spoiler
             else:
                 thumb = await self.save_file(thumb)
-                file = await self.save_file(animation, progress=progress, progress_args=progress_args)
+                file = await self.save_file(
+                    animation, progress=progress, progress_args=progress_args
+                )
                 media = raw.types.InputMediaUploadedDocument(
-                    mime_type=self.guess_mime_type(file_name or animation.name) or "video/mp4",
+                    mime_type=self.guess_mime_type(file_name or animation.name)
+                    or "video/mp4",
                     file=file,
                     thumb=thumb,
                     spoiler=has_spoiler,
@@ -273,11 +280,13 @@ class SendAnimation:
                             supports_streaming=True,
                             duration=duration,
                             w=width,
-                            h=height
+                            h=height,
                         ),
-                        raw.types.DocumentAttributeFilename(file_name=file_name or animation.name),
-                        raw.types.DocumentAttributeAnimated()
-                    ]
+                        raw.types.DocumentAttributeFilename(
+                            file_name=file_name or animation.name
+                        ),
+                        raw.types.DocumentAttributeAnimated(),
+                    ],
                 )
 
             while True:
@@ -293,32 +302,43 @@ class SendAnimation:
                         allow_paid_floodskip=allow_paid_broadcast,
                         effect=message_effect_id,
                         invert_media=invert_media,
-                        reply_markup=await reply_markup.write(self) if reply_markup else None,
-                        **await utils.parse_text_entities(self, caption, parse_mode, caption_entities)
+                        reply_markup=await reply_markup.write(self)
+                        if reply_markup
+                        else None,
+                        **await utils.parse_text_entities(
+                            self, caption, parse_mode, caption_entities
+                        ),
                     )
                     if business_connection_id is not None:
                         r = await self.invoke(
                             raw.functions.InvokeWithBusinessConnection(
-                                connection_id=business_connection_id,
-                                query=rpc
+                                connection_id=business_connection_id, query=rpc
                             )
                         )
                     else:
                         r = await self.invoke(rpc)
                 except FilePartMissing as e:
-                    await self.save_file(animation, file_id=file.id, file_part=e.value)
+                    await self.save_file(
+                        animation, file_id=file.id, file_part=e.value
+                    )
                 else:
                     for i in r.updates:
-                        if isinstance(i, (raw.types.UpdateNewMessage,
-                                          raw.types.UpdateNewChannelMessage,
-                                          raw.types.UpdateNewScheduledMessage,
-                                          raw.types.UpdateBotNewBusinessMessage)):
+                        if isinstance(
+                            i,
+                            raw.types.UpdateNewMessage
+                            | raw.types.UpdateNewChannelMessage
+                            | raw.types.UpdateNewScheduledMessage
+                            | raw.types.UpdateBotNewBusinessMessage,
+                        ):
                             message = await types.Message._parse(
-                                self, i.message,
+                                self,
+                                i.message,
                                 {i.id: i for i in r.users},
                                 {i.id: i for i in r.chats},
-                                is_scheduled=isinstance(i, raw.types.UpdateNewScheduledMessage),
-                                business_connection_id=business_connection_id
+                                is_scheduled=isinstance(
+                                    i, raw.types.UpdateNewScheduledMessage
+                                ),
+                                business_connection_id=business_connection_id,
                             )
 
                             if unsave:
@@ -329,8 +349,7 @@ class SendAnimation:
 
                                 await self.invoke(
                                     raw.functions.messages.SaveGif(
-                                        id=document_id,
-                                        unsave=True
+                                        id=document_id, unsave=True
                                     )
                                 )
 

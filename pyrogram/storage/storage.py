@@ -16,11 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import base64
 import struct
 from abc import abstractmethod
-from typing import List, Tuple
 
 
 class Storage:
@@ -46,14 +46,16 @@ class Storage:
     async def delete(self):
         raise NotImplementedError
 
-    async def update_peers(self, peers: List[Tuple[int, int, str, str, str]]):
+    async def update_peers(self, peers: list[tuple[int, int, str, str, str]]):
         raise NotImplementedError
 
-    async def update_usernames(self, usernames: List[Tuple[int, str]]):
+    async def update_usernames(self, usernames: list[tuple[int, str]]):
         raise NotImplementedError
 
     @abstractmethod
-    async def update_state(self, update_state: Tuple[int, int, int, int, int] = object):
+    async def update_state(
+        self, update_state: tuple[int, int, int, int, int] = object
+    ):
         """Get or set the update state of the current session.
 
         Parameters:
@@ -105,7 +107,7 @@ class Storage:
             await self.test_mode(),
             await self.auth_key(),
             await self.user_id(),
-            await self.is_bot()
+            await self.is_bot(),
         )
 
         return base64.urlsafe_b64encode(packed).decode().rstrip("=")

@@ -16,9 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class ChatPrivileges(Object):
@@ -96,11 +101,11 @@ class ChatPrivileges(Object):
         can_edit_messages: bool = False,  # Channels only
         can_invite_users: bool = False,
         can_pin_messages: bool = False,  # Groups and supergroups only
-        can_manage_topics: bool = False, # supergroups only.
-        can_post_stories: bool = False, # Channels only
-        can_edit_stories: bool = False, # Channels only
-        can_delete_stories: bool = False, # Channels only
-        is_anonymous: bool = False
+        can_manage_topics: bool = False,  # supergroups only.
+        can_post_stories: bool = False,  # Channels only
+        can_edit_stories: bool = False,  # Channels only
+        can_delete_stories: bool = False,  # Channels only
+        is_anonymous: bool = False,
     ):
         super().__init__(None)
 
@@ -121,7 +126,7 @@ class ChatPrivileges(Object):
         self.is_anonymous: bool = is_anonymous
 
     @staticmethod
-    def _parse(admin_rights: "raw.base.ChatAdminRights") -> "ChatPrivileges":
+    def _parse(admin_rights: raw.base.ChatAdminRights) -> ChatPrivileges:
         return ChatPrivileges(
             can_manage_chat=admin_rights.other,
             can_delete_messages=admin_rights.delete_messages,
@@ -137,5 +142,5 @@ class ChatPrivileges(Object):
             can_post_stories=admin_rights.post_stories,
             can_edit_stories=admin_rights.edit_stories,
             can_delete_stories=admin_rights.delete_stories,
-            is_anonymous=admin_rights.anonymous
+            is_anonymous=admin_rights.anonymous,
         )

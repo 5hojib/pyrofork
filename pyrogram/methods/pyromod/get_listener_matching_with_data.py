@@ -16,18 +16,21 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
+from typing import TYPE_CHECKING
 
-from typing import Optional
-from pyrogram.types import Identifier, Listener
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram.types import Identifier, Listener
+
 
 class GetListenerMatchingWithData:
     def get_listener_matching_with_data(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         data: Identifier,
-        listener_type: "pyrogram.enums.ListenerTypes"
-    ) -> Optional[Listener]:
+        listener_type: pyrogram.enums.ListenerTypes,
+    ) -> Listener | None:
         """Gets a listener that matches the given data.
 
         .. include:: /_includes/usable-by/users-bots.rst

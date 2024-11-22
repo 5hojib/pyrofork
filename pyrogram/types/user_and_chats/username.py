@@ -15,9 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class Username(Object):
@@ -36,10 +41,11 @@ class Username(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         username: str,
-        editable: bool = None,
-        active: bool = None
+        editable: bool | None = None,
+        active: bool | None = None,
     ):
         super().__init__()
 
@@ -48,11 +54,9 @@ class Username(Object):
         self.active = active
 
     @staticmethod
-    def _parse(action: "raw.types.Username") -> "Username":
-
-
+    def _parse(action: raw.types.Username) -> Username:
         return Username(
-            username=getattr(action,"username", None),
-            editable=getattr(action,"editable", None),
-            active=getattr(action,"active", None)
+            username=getattr(action, "username", None),
+            editable=getattr(action, "editable", None),
+            active=getattr(action, "active", None),
         )

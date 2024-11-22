@@ -16,15 +16,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
-from pyrogram.types import Listener
+import contextlib
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram.types import Listener
+
 
 class RemoveListener:
-    def remove_listener(
-        self: "pyrogram.Client",
-        listener: Listener
-    ):
+    def remove_listener(self: pyrogram.Client, listener: Listener):
         """Removes a listener from the :meth:`~pyrogram.Client.listeners` dictionary.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -33,7 +36,5 @@ class RemoveListener:
             listener (:obj:`~pyrogram.types.Listener`):
                 The listener to remove.
         """
-        try:
+        with contextlib.suppress(ValueError):
             self.listeners[listener.listener_type].remove(listener)
-        except ValueError:
-            pass

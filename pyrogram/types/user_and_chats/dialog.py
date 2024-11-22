@@ -16,12 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
-from ... import utils
+from pyrogram import raw, types, utils
+from pyrogram.types.object import Object
 
 
 class Dialog(Object):
@@ -50,13 +49,13 @@ class Dialog(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        chat: "types.Chat",
-        top_message: "types.Message",
+        client: pyrogram.Client = None,
+        chat: types.Chat,
+        top_message: types.Message,
         unread_messages_count: int,
         unread_mentions_count: int,
         unread_mark: bool,
-        is_pinned: bool
+        is_pinned: bool,
     ):
         super().__init__(client)
 
@@ -68,7 +67,7 @@ class Dialog(Object):
         self.is_pinned = is_pinned
 
     @staticmethod
-    def _parse(client, dialog: "raw.types.Dialog", messages, users, chats) -> "Dialog":
+    def _parse(client, dialog: raw.types.Dialog, messages, users, chats) -> Dialog:
         return Dialog(
             chat=types.Chat._parse_dialog(client, dialog.peer, users, chats),
             top_message=messages.get(utils.get_peer_id(dialog.peer)),
@@ -76,5 +75,5 @@ class Dialog(Object):
             unread_mentions_count=dialog.unread_mentions_count,
             unread_mark=dialog.unread_mark,
             is_pinned=dialog.pinned,
-            client=client
+            client=client,
         )

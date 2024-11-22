@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import List, Union, Optional
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import enums, raw, types, utils
@@ -25,17 +24,17 @@ from pyrogram import enums, raw, types, utils
 
 class SendInlineBotResult:
     async def send_inline_bot_result(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         query_id: int,
         result_id: str,
-        disable_notification: bool = None,
-        message_thread_id: int = None,
-        reply_to_message_id: int = None,
-        quote_text: str = None,
-        quote_entities: List["types.MessageEntity"] = None,
-        parse_mode: Optional["enums.ParseMode"] = None
-    ) -> "types.Message":
+        disable_notification: bool | None = None,
+        message_thread_id: int | None = None,
+        reply_to_message_id: int | None = None,
+        quote_text: str | None = None,
+        quote_entities: list[types.MessageEntity] | None = None,
+        parse_mode: enums.ParseMode | None = None,
+    ) -> types.Message:
         """Send an inline bot result.
         Bot results can be retrieved using :meth:`~pyrogram.Client.get_inline_bot_results`
 
@@ -86,7 +85,7 @@ class SendInlineBotResult:
 
                 await app.send_inline_bot_result(chat_id, query_id, result_id)
         """
-    
+
         reply_to = await utils.get_reply_to(
             client=self,
             chat_id=chat_id,
@@ -94,7 +93,7 @@ class SendInlineBotResult:
             message_thread_id=message_thread_id,
             quote_text=quote_text,
             quote_entities=quote_entities,
-            parse_mode=parse_mode
+            parse_mode=parse_mode,
         )
 
         r = await self.invoke(
@@ -104,15 +103,18 @@ class SendInlineBotResult:
                 id=result_id,
                 random_id=self.rnd_id(),
                 silent=disable_notification or None,
-                reply_to=reply_to
+                reply_to=reply_to,
             )
         )
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateNewMessage,
-                              raw.types.UpdateNewChannelMessage)):
+            if isinstance(
+                i, raw.types.UpdateNewMessage | raw.types.UpdateNewChannelMessage
+            ):
                 return await types.Message._parse(
-                    self, i.message,
+                    self,
+                    i.message,
                     {i.id: i for i in r.users},
                     {i.id: i for i in r.chats},
                 )
+        return None

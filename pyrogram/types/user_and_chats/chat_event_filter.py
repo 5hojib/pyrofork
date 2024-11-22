@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class ChatEventFilter(Object):
@@ -73,7 +74,8 @@ class ChatEventFilter(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         new_restrictions: bool = False,
         new_privileges: bool = False,
         new_members: bool = False,
@@ -84,7 +86,7 @@ class ChatEventFilter(Object):
         edited_messages: bool = False,
         pinned_messages: bool = False,
         leaving_members: bool = False,
-        video_chats: bool = False
+        video_chats: bool = False,
     ):
         super().__init__()
 
@@ -100,7 +102,7 @@ class ChatEventFilter(Object):
         self.leaving_members = leaving_members
         self.video_chats = video_chats
 
-    def write(self) -> "raw.base.ChannelAdminLogEventsFilter":
+    def write(self) -> raw.base.ChannelAdminLogEventsFilter:
         join = False
         leave = False
         invite = False
@@ -172,5 +174,5 @@ class ChatEventFilter(Object):
             edit=edit,
             delete=delete,
             group_call=group_call,
-            invites=invites
+            invites=invites,
         )

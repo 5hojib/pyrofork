@@ -1,4 +1,5 @@
 """PyroFork async utils"""
+
 # Copyright (C) 2020 - 2023  UserbotIndo Team, <https://github.com/userbotindo.git>
 # Copyright (C) 2022-present  Mayuri-Chan, <https://github.com/Mayuri-Chan.git>
 #
@@ -14,14 +15,22 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, TypeVar
 
 from pyrogram import utils
-from typing import Any, Callable, TypeVar
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class RunSync:
     Result = TypeVar("Result")
 
-    async def run_sync(self, func: Callable[..., Result], *args: Any, **kwargs: Any) -> Result:
+    async def run_sync(
+        self, func: Callable[..., Result], *args: Any, **kwargs: Any
+    ) -> Result:
         """Runs the given sync function (optionally with arguments) on a separate thread.
 
         Parameters:

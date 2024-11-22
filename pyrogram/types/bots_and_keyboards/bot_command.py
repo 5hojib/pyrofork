@@ -16,10 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class BotCommand(Object):
@@ -40,15 +40,12 @@ class BotCommand(Object):
         self.command = command
         self.description = description
 
-    def write(self) -> "raw.types.BotCommand":
+    def write(self) -> raw.types.BotCommand:
         return raw.types.BotCommand(
             command=self.command,
             description=self.description,
         )
 
     @staticmethod
-    def read(c: "raw.types.BotCommand") -> "BotCommand":
-        return BotCommand(
-            command=c.command,
-            description=c.description
-        )
+    def read(c: raw.types.BotCommand) -> BotCommand:
+        return BotCommand(command=c.command, description=c.description)

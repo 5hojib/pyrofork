@@ -15,13 +15,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram import raw, types, utils
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class Gift(Object):
@@ -63,17 +66,17 @@ class Gift(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         id: int,
-        sticker: "types.Sticker",
+        sticker: types.Sticker,
         star_count: int,
         default_sell_star_count: int,
-        remaining_count: Optional[int] = None,
-        total_count: Optional[int] = None,
-        first_send_date: Optional[datetime] = None,
-        last_send_date: Optional[datetime] = None,
-        is_limited: Optional[bool] = None,
-        is_sold_out: Optional[bool] = None,
+        remaining_count: int | None = None,
+        total_count: int | None = None,
+        first_send_date: datetime | None = None,
+        last_send_date: datetime | None = None,
+        is_limited: bool | None = None,
+        is_sold_out: bool | None = None,
     ):
         super().__init__(client)
 
@@ -91,8 +94,8 @@ class Gift(Object):
     @staticmethod
     async def _parse(
         client,
-        star_gift: "raw.types.StarGift",
-    ) -> "Gift":
+        star_gift: raw.types.StarGift,
+    ) -> Gift:
         doc = star_gift.sticker
         attributes = {type(i): i for i in doc.attributes}
 
@@ -103,9 +106,13 @@ class Gift(Object):
             default_sell_star_count=star_gift.convert_stars,
             remaining_count=getattr(star_gift, "availability_remains", None),
             total_count=getattr(star_gift, "availability_total", None),
-            first_send_date=utils.timestamp_to_datetime(getattr(star_gift, "first_sale_date", None)),
-            last_send_date=utils.timestamp_to_datetime(getattr(star_gift, "last_sale_date", None)),
+            first_send_date=utils.timestamp_to_datetime(
+                getattr(star_gift, "first_sale_date", None)
+            ),
+            last_send_date=utils.timestamp_to_datetime(
+                getattr(star_gift, "last_sale_date", None)
+            ),
             is_limited=getattr(star_gift, "limited", None),
             is_sold_out=getattr(star_gift, "sold_out", None),
-            client=client
+            client=client,
         )

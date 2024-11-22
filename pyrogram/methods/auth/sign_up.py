@@ -16,24 +16,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 log = logging.getLogger(__name__)
 
 
 class SignUp:
     async def sign_up(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         phone_number: str,
         phone_code_hash: str,
         first_name: str,
-        last_name: str = ""
-    ) -> "types.User":
+        last_name: str = "",
+    ) -> types.User:
         """Register a new user in Telegram.
 
         .. include:: /_includes/usable-by/users.rst
@@ -64,7 +64,7 @@ class SignUp:
                 phone_number=phone_number,
                 first_name=first_name,
                 last_name=last_name,
-                phone_code_hash=phone_code_hash
+                phone_code_hash=phone_code_hash,
             )
         )
 

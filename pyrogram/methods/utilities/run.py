@@ -16,19 +16,20 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
 import inspect
+from typing import TYPE_CHECKING
 
-import pyrogram
 from pyrogram.methods.utilities.idle import idle
+
+if TYPE_CHECKING:
+    import pyrogram
 
 
 class Run:
-    def run(
-        self: "pyrogram.Client",
-        coroutine=None
-    ):
+    def run(self: pyrogram.Client, coroutine=None):
         """Start the client, idle the main script and finally stop the client.
 
         When calling this method without any argument it acts as a convenience method that calls
@@ -76,12 +77,11 @@ class Run:
 
         if coroutine is not None:
             run(coroutine)
+        elif inspect.iscoroutinefunction(self.start):
+            run(self.start())
+            run(idle())
+            run(self.stop())
         else:
-            if inspect.iscoroutinefunction(self.start):
-                run(self.start())
-                run(idle())
-                run(self.stop())
-            else:
-                self.start()
-                run(idle())
-                self.stop()
+            self.start()
+            run(idle())
+            self.stop()

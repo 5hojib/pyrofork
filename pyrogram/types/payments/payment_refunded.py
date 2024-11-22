@@ -15,12 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
+from typing import TYPE_CHECKING
 
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram import raw, types
 
 
 class PaymentRefunded(Object):
@@ -47,13 +50,14 @@ class PaymentRefunded(Object):
     """
 
     def __init__(
-        self, *,
-        user: "types.User",
+        self,
+        *,
+        user: types.User,
         currency: str,
         total_amount: str,
         telegram_payment_charge_id: str,
         provider_payment_charge_id: str,
-        payload: str = None
+        payload: str | None = None,
     ):
         self.user = user
         self.currency = currency
@@ -64,9 +68,9 @@ class PaymentRefunded(Object):
 
     @staticmethod
     async def _parse(
-        client: "pyrogram.Client",
-        payment_refunded: "raw.types.MessageActionPaymentRefunded"
-    ) -> "PaymentRefunded":
+        client: pyrogram.Client,
+        payment_refunded: raw.types.MessageActionPaymentRefunded,
+    ) -> PaymentRefunded:
         try:
             payload = payment_refunded.payload.decode()
         except (UnicodeDecodeError, AttributeError):
@@ -76,7 +80,11 @@ class PaymentRefunded(Object):
             user=await client.get_users(payment_refunded.peer.user_id),
             currency=payment_refunded.currency,
             total_amount=payment_refunded.total_amount,
-            telegram_payment_charge_id=payment_refunded.charge.id if payment_refunded.charge.id != "" else None,
-            provider_payment_charge_id=payment_refunded.charge.provider_charge_id if payment_refunded.charge.provider_charge_id != "" else None,
-            payload=payload
+            telegram_payment_charge_id=payment_refunded.charge.id
+            if payment_refunded.charge.id != ""
+            else None,
+            provider_payment_charge_id=payment_refunded.charge.provider_charge_id
+            if payment_refunded.charge.provider_charge_id != ""
+            else None,
+            payload=payload,
         )

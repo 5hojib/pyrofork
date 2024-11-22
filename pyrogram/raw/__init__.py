@@ -16,10 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from importlib import import_module
 
-from . import types, functions, base, core
+from . import base, core, functions, types
 from .all import objects
 
 for k, v in objects.items():

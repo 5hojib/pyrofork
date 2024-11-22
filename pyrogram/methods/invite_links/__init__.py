@@ -16,7 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
+from __future__ import annotations
 
 from .approve_all_chat_join_requests import ApproveAllChatJoinRequests
 from .approve_chat_join_request import ApproveChatJoinRequest
@@ -54,6 +54,6 @@ class InviteLinks(
     DeclineChatJoinRequest,
     ApproveAllChatJoinRequests,
     DeclineAllChatJoinRequests,
-    GetChatJoinRequests
+    GetChatJoinRequests,
 ):
     pass

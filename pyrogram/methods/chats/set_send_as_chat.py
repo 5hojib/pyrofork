@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -25,9 +24,7 @@ from pyrogram import raw
 
 class SetSendAsChat:
     async def set_send_as_chat(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        send_as_chat_id: Union[int, str]
+        self: pyrogram.Client, chat_id: int | str, send_as_chat_id: int | str
     ) -> bool:
         """Set the default "send_as" chat for a chat.
 
@@ -55,6 +52,6 @@ class SetSendAsChat:
         return await self.invoke(
             raw.functions.messages.SaveDefaultSendAs(
                 peer=await self.resolve_peer(chat_id),
-                send_as=await self.resolve_peer(send_as_chat_id)
+                send_as=await self.resolve_peer(send_as_chat_id),
             )
         )

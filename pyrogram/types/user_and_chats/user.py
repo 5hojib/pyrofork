@@ -16,17 +16,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import html
-from datetime import datetime
-from typing import List, Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import enums, utils
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
-from ..update import Update
+from pyrogram import enums, raw, types, utils
+from pyrogram.types.object import Object
+from pyrogram.types.update import Update
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class Link(str):
@@ -42,10 +43,7 @@ class Link(str):
 
     @staticmethod
     def format(url: str, text: str, style: enums.ParseMode):
-        if style == enums.ParseMode.MARKDOWN:
-            fmt = Link.MARKDOWN
-        else:
-            fmt = Link.HTML
+        fmt = Link.MARKDOWN if style == enums.ParseMode.MARKDOWN else Link.HTML
 
         return fmt.format(url=url, text=html.escape(text))
 
@@ -53,7 +51,7 @@ class Link(str):
     def __new__(cls, url, text, style):
         return str.__new__(cls, Link.format(url, text, style))
 
-    def __call__(self, other: str = None, *, style: str = None):
+    def __call__(self, other: str | None = None, *, style: str | None = None):
         return Link.format(self.url, other or self.text, style or self.style)
 
     def __str__(self):
@@ -173,37 +171,37 @@ class User(Object, Update):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         id: int,
-        is_self: bool = None,
-        is_contact: bool = None,
-        is_mutual_contact: bool = None,
-        is_deleted: bool = None,
-        is_bot: bool = None,
-        is_verified: bool = None,
-        is_restricted: bool = None,
-        is_scam: bool = None,
-        is_fake: bool = None,
-        is_support: bool = None,
-        is_premium: bool = None,
-        is_contacts_only: bool = None,
-        is_bot_business: bool = None,
-        first_name: str = None,
-        last_name: str = None,
-        status: "enums.UserStatus" = None,
-        last_online_date: datetime = None,
-        next_offline_date: datetime = None,
-        username: str = None,
-        usernames: List["types.Username"] = None,
-        language_code: str = None,
-        emoji_status: Optional["types.EmojiStatus"] = None,
-        dc_id: int = None,
-        phone_number: str = None,
-        photo: "types.ChatPhoto" = None,
-        restrictions: List["types.Restriction"] = None,
-        reply_color: "types.ChatColor" = None,
-        profile_color: "types.ChatColor" = None,
-        active_users: int = None
+        is_self: bool | None = None,
+        is_contact: bool | None = None,
+        is_mutual_contact: bool | None = None,
+        is_deleted: bool | None = None,
+        is_bot: bool | None = None,
+        is_verified: bool | None = None,
+        is_restricted: bool | None = None,
+        is_scam: bool | None = None,
+        is_fake: bool | None = None,
+        is_support: bool | None = None,
+        is_premium: bool | None = None,
+        is_contacts_only: bool | None = None,
+        is_bot_business: bool | None = None,
+        first_name: str | None = None,
+        last_name: str | None = None,
+        status: enums.UserStatus = None,
+        last_online_date: datetime | None = None,
+        next_offline_date: datetime | None = None,
+        username: str | None = None,
+        usernames: list[types.Username] | None = None,
+        language_code: str | None = None,
+        emoji_status: types.EmojiStatus | None = None,
+        dc_id: int | None = None,
+        phone_number: str | None = None,
+        photo: types.ChatPhoto = None,
+        restrictions: list[types.Restriction] | None = None,
+        reply_color: types.ChatColor = None,
+        profile_color: types.ChatColor = None,
+        active_users: int | None = None,
     ):
         super().__init__(client)
 
@@ -247,11 +245,11 @@ class User(Object, Update):
         return Link(
             f"tg://user?id={self.id}",
             self.first_name or "Deleted Account",
-            self._client.parse_mode
+            self._client.parse_mode,
         )
 
     @staticmethod
-    def _parse(client, user: "raw.base.User") -> Optional["User"]:
+    def _parse(client, user: raw.base.User) -> User | None:
         if user is None or isinstance(user, raw.types.UserEmpty):
             return None
         user_name = user.username
@@ -293,16 +291,23 @@ class User(Object, Update):
             emoji_status=types.EmojiStatus._parse(client, user.emoji_status),
             dc_id=getattr(user.photo, "dc_id", None),
             phone_number=user.phone,
-            photo=types.ChatPhoto._parse(client, user.photo, user.id, user.access_hash),
-            restrictions=types.List([types.Restriction._parse(r) for r in user.restriction_reason]) or None,
+            photo=types.ChatPhoto._parse(
+                client, user.photo, user.id, user.access_hash
+            ),
+            restrictions=types.List(
+                [types.Restriction._parse(r) for r in user.restriction_reason]
+            )
+            or None,
             reply_color=types.ChatColor._parse(getattr(user, "color", None)),
-            profile_color=types.ChatColor._parse_profile_color(getattr(user, "profile_color", None)),
+            profile_color=types.ChatColor._parse_profile_color(
+                getattr(user, "profile_color", None)
+            ),
             active_users=active_users,
-            client=client
+            client=client,
         )
 
     @staticmethod
-    def _parse_status(user_status: "raw.base.UserStatus", is_bot: bool = False):
+    def _parse_status(user_status: raw.base.UserStatus, is_bot: bool = False):
         if isinstance(user_status, raw.types.UserStatusOnline):
             status, date = enums.UserStatus.ONLINE, user_status.expires
         elif isinstance(user_status, raw.types.UserStatusOffline):
@@ -331,15 +336,15 @@ class User(Object, Update):
         return {
             "status": status,
             "last_online_date": last_online_date,
-            "next_offline_date": next_offline_date
+            "next_offline_date": next_offline_date,
         }
 
     @staticmethod
-    def _parse_user_status(client, user_status: "raw.types.UpdateUserStatus"):
+    def _parse_user_status(client, user_status: raw.types.UpdateUserStatus):
         return User(
             id=user_status.user_id,
             **User._parse_status(user_status.status),
-            client=client
+            client=client,
         )
 
     def listen(self, *args, **kwargs):
@@ -373,7 +378,7 @@ class User(Object, Update):
 
     def ask(self, text, *args, **kwargs):
         """Bound method *ask* of :obj:`~pyrogram.types.User`.
-        
+
         Use as a shortcut for:
 
         .. code-block:: python
@@ -407,7 +412,7 @@ class User(Object, Update):
 
     def stop_listening(self, *args, **kwargs):
         """Bound method *stop_listening* of :obj:`~pyrogram.types.User`.
-        
+
         Use as a shortcut for:
 
         .. code-block:: python

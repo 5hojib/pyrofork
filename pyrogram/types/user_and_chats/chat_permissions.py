@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class ChatPermissions(Object):
@@ -95,26 +96,28 @@ class ChatPermissions(Object):
     def __init__(
         self,
         *,
-        all_perms: bool = None,
-        can_send_messages: bool = None,  # Text, contacts, locations and venues
-        can_send_media_messages: bool = None,  # Audio files, documents, photos, videos, video notes and voice notes
-        can_send_polls: bool = None,
-        can_add_web_page_previews: bool = None,
-        can_change_info: bool = None,
-        can_invite_users: bool = None,
-        can_pin_messages: bool = None,
-        can_manage_topics: bool = None,
-        can_send_audios: bool = None,
-        can_send_docs: bool = None,
-        can_send_games: bool = None,
-        can_send_gifs: bool = None,
-        can_send_inline: bool = None,
-        can_send_photos: bool = None,
-        can_send_plain: bool = None,
-        can_send_roundvideos: bool = None,
-        can_send_stickers: bool = None,
-        can_send_videos: bool = None,
-        can_send_voices: bool = None
+        all_perms: bool | None = None,
+        can_send_messages: bool
+        | None = None,  # Text, contacts, locations and venues
+        can_send_media_messages: bool
+        | None = None,  # Audio files, documents, photos, videos, video notes and voice notes
+        can_send_polls: bool | None = None,
+        can_add_web_page_previews: bool | None = None,
+        can_change_info: bool | None = None,
+        can_invite_users: bool | None = None,
+        can_pin_messages: bool | None = None,
+        can_manage_topics: bool | None = None,
+        can_send_audios: bool | None = None,
+        can_send_docs: bool | None = None,
+        can_send_games: bool | None = None,
+        can_send_gifs: bool | None = None,
+        can_send_inline: bool | None = None,
+        can_send_photos: bool | None = None,
+        can_send_plain: bool | None = None,
+        can_send_roundvideos: bool | None = None,
+        can_send_stickers: bool | None = None,
+        can_send_videos: bool | None = None,
+        can_send_voices: bool | None = None,
     ):
         super().__init__(None)
 
@@ -163,7 +166,7 @@ class ChatPermissions(Object):
             self.all_perms = False
 
     @staticmethod
-    def _parse(denied_permissions: "raw.base.ChatBannedRights") -> "ChatPermissions":
+    def _parse(denied_permissions: raw.base.ChatBannedRights) -> ChatPermissions:
         if isinstance(denied_permissions, raw.types.ChatBannedRights):
             all_permissions = None
             all_params = [
@@ -184,7 +187,7 @@ class ChatPermissions(Object):
                 denied_permissions.send_roundvideos,
                 denied_permissions.send_stickers,
                 denied_permissions.send_videos,
-                denied_permissions.send_voices
+                denied_permissions.send_voices,
             ]
             all_params_not = [
                 not denied_permissions.send_messages,
@@ -204,7 +207,7 @@ class ChatPermissions(Object):
                 not denied_permissions.send_roundvideos,
                 not denied_permissions.send_stickers,
                 not denied_permissions.send_videos,
-                not denied_permissions.send_voices
+                not denied_permissions.send_voices,
             ]
             if all(all_params):
                 all_permissions = False
@@ -230,5 +233,6 @@ class ChatPermissions(Object):
                 can_send_roundvideos=not denied_permissions.send_roundvideos,
                 can_send_stickers=not denied_permissions.send_stickers,
                 can_send_videos=not denied_permissions.send_videos,
-                can_send_voices=not denied_permissions.send_voices
+                can_send_voices=not denied_permissions.send_voices,
             )
+        return None

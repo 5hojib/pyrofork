@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with PyroFork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .animation import Animation
 from .audio import Audio
@@ -26,6 +27,7 @@ from .contact import Contact
 from .contact_registered import ContactRegistered
 from .dice import Dice
 from .document import Document
+from .exported_story_link import ExportedStoryLink
 from .game import Game
 from .giveaway import Giveaway
 from .giveaway_launched import GiveawayLaunched
@@ -36,6 +38,11 @@ from .media_area_channel_post import MediaAreaChannelPost
 from .media_area_coordinates import MediaAreaCoordinates
 from .message import Message
 from .message_entity import MessageEntity
+from .message_reaction_count_updated import MessageReactionCountUpdated
+from .message_reaction_updated import MessageReactionUpdated
+from .message_reactions import MessageReactions
+from .message_reactor import MessageReactor
+from .message_story import MessageStory
 from .photo import Photo
 from .poll import Poll
 from .poll_option import PollOption
@@ -45,30 +52,24 @@ from .screenshot_taken import ScreenshotTaken
 from .sticker import Sticker
 from .stickerset import StickerSet
 from .stories_privacy_rules import StoriesPrivacyRules
-from .stripped_thumbnail import StrippedThumbnail
-from .thumbnail import Thumbnail
-from .venue import Venue
-from .video import Video
-from .video_note import VideoNote
-from .voice import Voice
-from .web_app_data import WebAppData
-from .web_page import WebPage
-from .web_page_empty import WebPageEmpty
-from .web_page_preview import WebPagePreview
-from .message_reactions import MessageReactions
-from .message_reaction_updated import MessageReactionUpdated
-from .message_reaction_count_updated import MessageReactionCountUpdated
-from .message_reactor import MessageReactor
-from .message_story import MessageStory
 from .story import Story
 from .story_deleted import StoryDeleted
 from .story_forward_header import StoryForwardHeader
 from .story_skipped import StorySkipped
 from .story_views import StoryViews
-from .exported_story_link import ExportedStoryLink
+from .stripped_thumbnail import StrippedThumbnail
+from .thumbnail import Thumbnail
+from .translated_text import TranslatedText
+from .venue import Venue
+from .video import Video
+from .video_note import VideoNote
+from .voice import Voice
 from .wallpaper import Wallpaper
 from .wallpaper_settings import WallpaperSettings
-from .translated_text import TranslatedText
+from .web_app_data import WebAppData
+from .web_page import WebPage
+from .web_page_empty import WebPageEmpty
+from .web_page_preview import WebPagePreview
 
 __all__ = [
     "Animation",
@@ -78,7 +79,9 @@ __all__ = [
     "ChatWallpaper",
     "Contact",
     "ContactRegistered",
+    "Dice",
     "Document",
+    "ExportedStoryLink",
     "Game",
     "Giveaway",
     "GiveawayLaunched",
@@ -89,38 +92,36 @@ __all__ = [
     "MediaAreaCoordinates",
     "Message",
     "MessageEntity",
+    "MessageReactionCountUpdated",
+    "MessageReactionUpdated",
+    "MessageReactions",
+    "MessageReactor",
+    "MessageStory",
     "Photo",
-    "Thumbnail",
-    "StrippedThumbnail",
     "Poll",
     "PollOption",
+    "Reaction",
+    "ReadParticipant",
+    "ScreenshotTaken",
     "Sticker",
     "StickerSet",
+    "StoriesPrivacyRules",
+    "Story",
+    "StoryDeleted",
+    "StoryForwardHeader",
+    "StorySkipped",
+    "StoryViews",
+    "StrippedThumbnail",
+    "Thumbnail",
+    "TranslatedText",
     "Venue",
     "Video",
     "VideoNote",
     "Voice",
+    "Wallpaper",
+    "WallpaperSettings",
+    "WebAppData",
     "WebPage",
     "WebPageEmpty",
     "WebPagePreview",
-    "Dice",
-    "Reaction",
-    "WebAppData",
-    "MessageReactions",
-    "MessageReactionUpdated",
-    "MessageReactionCountUpdated",
-    "MessageReactor",
-    "MessageStory",
-    "ReadParticipant",
-    "ScreenshotTaken",
-    "Story",
-    "StoryDeleted",
-    "StorySkipped",
-    "StoryViews",
-    "StoryForwardHeader",
-    "StoriesPrivacyRules",
-    "ExportedStoryLink",
-    "Wallpaper",
-    "WallpaperSettings",
-    "TranslatedText"
 ]

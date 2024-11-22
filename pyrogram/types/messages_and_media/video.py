@@ -16,15 +16,22 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import List
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
-from pyrogram.file_id import FileId, FileType, FileUniqueId, FileUniqueType, ThumbnailSource
-from ..object import Object
+from pyrogram import raw, types, utils
+from pyrogram.file_id import (
+    FileId,
+    FileType,
+    FileUniqueId,
+    FileUniqueType,
+)
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class Video(Object):
@@ -72,19 +79,19 @@ class Video(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         file_id: str,
         file_unique_id: str,
         width: int,
         height: int,
         duration: int,
-        file_name: str = None,
-        mime_type: str = None,
-        file_size: int = None,
-        supports_streaming: bool = None,
-        ttl_seconds: int = None,
-        date: datetime = None,
-        thumbs: List["types.Thumbnail"] = None
+        file_name: str | None = None,
+        mime_type: str | None = None,
+        file_size: int | None = None,
+        supports_streaming: bool | None = None,
+        ttl_seconds: int | None = None,
+        date: datetime | None = None,
+        thumbs: list[types.Thumbnail] | None = None,
     ):
         super().__init__(client)
 
@@ -104,22 +111,21 @@ class Video(Object):
     @staticmethod
     def _parse(
         client,
-        video: "raw.types.Document",
-        video_attributes: "raw.types.DocumentAttributeVideo",
+        video: raw.types.Document,
+        video_attributes: raw.types.DocumentAttributeVideo,
         file_name: str,
-        ttl_seconds: int = None
-    ) -> "Video":
+        ttl_seconds: int | None = None,
+    ) -> Video:
         return Video(
             file_id=FileId(
                 file_type=FileType.VIDEO,
                 dc_id=video.dc_id,
                 media_id=video.id,
                 access_hash=video.access_hash,
-                file_reference=video.file_reference
+                file_reference=video.file_reference,
             ).encode(),
             file_unique_id=FileUniqueId(
-                file_unique_type=FileUniqueType.DOCUMENT,
-                media_id=video.id
+                file_unique_type=FileUniqueType.DOCUMENT, media_id=video.id
             ).encode(),
             width=video_attributes.w,
             height=video_attributes.h,
@@ -131,5 +137,5 @@ class Video(Object):
             date=utils.timestamp_to_datetime(video.date),
             ttl_seconds=ttl_seconds,
             thumbs=types.Thumbnail._parse(client, video),
-            client=client
+            client=client,
         )

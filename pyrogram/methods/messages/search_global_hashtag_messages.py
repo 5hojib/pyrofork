@@ -15,22 +15,26 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import AsyncGenerator
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram import raw, types, utils
 
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+    from datetime import datetime
+
 
 class SearchGlobalHashtagMessages:
     async def search_global_hashtag_messages(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         hashtag: str = "",
         offset_id: int = 0,
         offset_date: datetime = utils.zero_datetime(),
         limit: int = 0,
-    ) -> AsyncGenerator["types.Message", None]:
+    ) -> AsyncGenerator[types.Message, None]:
         """Searches for public channel posts with the given hashtag. For optimal performance, the number of returned messages is chosen by Telegram Server and can be smaller than the specified limit.
 
         If you want to get the posts count only, see :meth:`~pyrogram.Client.search_public_hashtag_messages_count`.
@@ -48,7 +52,7 @@ class SearchGlobalHashtagMessages:
                 Pass a date as offset to retrieve only older messages starting from that date.
 
             limit (``int``, *optional*):
-                The maximum number of messages to be returned. 
+                The maximum number of messages to be returned.
                 By default, no limit is applied and all posts are returned.
 
         Returns:
@@ -60,7 +64,7 @@ class SearchGlobalHashtagMessages:
                 # Search for "#pyrogram". Get the first 50 results
                 async for message in app.search_public_hashtag_messages("#pyrogram"):
                     print(message.text)
-                    
+
         """
         current = 0
         total = abs(limit) or (1 << 31)
@@ -77,11 +81,11 @@ class SearchGlobalHashtagMessages:
                         offset_rate=utils.datetime_to_timestamp(offset_date),
                         offset_peer=offset_peer,
                         offset_id=offset_id,
-                        limit=limit
+                        limit=limit,
                     ),
-                    sleep_threshold=60
+                    sleep_threshold=60,
                 ),
-                replies=0
+                replies=0,
             )
 
             if not messages:

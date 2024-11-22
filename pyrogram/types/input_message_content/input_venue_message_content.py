@@ -15,12 +15,13 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
-from typing import Optional
 
 import pyrogram
 from pyrogram import raw
+
 from .input_message_content import InputMessageContent
 
 log = logging.getLogger(__name__)
@@ -56,10 +57,10 @@ class InputVenueMessageContent(InputMessageContent):
         longitude: float,
         title: str,
         address: str,
-        foursquare_id: Optional[str] = None,
-        foursquare_type: Optional[str] = None,
-        google_place_id: Optional[str] = None,
-        google_place_type: Optional[str] = None
+        foursquare_id: str | None = None,
+        foursquare_type: str | None = None,
+        google_place_id: str | None = None,
+        google_place_type: str | None = None,
     ):
         super().__init__()
 
@@ -72,16 +73,15 @@ class InputVenueMessageContent(InputMessageContent):
         self.google_place_id = google_place_id
         self.google_place_type = google_place_type
 
-    async def write(self, client: "pyrogram.Client", reply_markup):
+    async def write(self, client: pyrogram.Client, reply_markup):
         return raw.types.InputBotInlineMessageMediaVenue(
             geo_point=raw.types.InputGeoPoint(
-                lat=self.latitude,
-                long=self.longitude
+                lat=self.latitude, long=self.longitude
             ),
             title=self.title,
             address=self.address,
-            provider="", # TODO
+            provider="",  # TODO
             venue_id=self.foursquare_id,
             venue_type=self.foursquare_type,
-            reply_markup=await reply_markup.write(client) if reply_markup else None
+            reply_markup=await reply_markup.write(client) if reply_markup else None,
         )

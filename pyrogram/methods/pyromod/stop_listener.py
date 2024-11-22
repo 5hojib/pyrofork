@@ -16,19 +16,21 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import inspect
-import pyrogram
+from typing import TYPE_CHECKING
 
 from pyrogram.errors import ListenerStopped
-from pyrogram.types import Listener
 from pyrogram.utils import PyromodConfig
 
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram.types import Listener
+
+
 class StopListener:
-    async def stop_listener(
-        self: "pyrogram.Client",
-        listener: Listener
-    ):
+    async def stop_listener(self: pyrogram.Client, listener: Listener):
         """Stops a listener, calling stopped_handler if applicable or raising ListenerStopped if throw_exceptions is True.
 
         .. include:: /_includes/usable-by/users-bots.rst

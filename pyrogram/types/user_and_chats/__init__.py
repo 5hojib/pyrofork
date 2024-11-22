@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .birthday import Birthday
 from .business_info import BusinessInfo
@@ -42,19 +43,19 @@ from .chat_reactions import ChatReactions
 from .dialog import Dialog
 from .emoji_status import EmojiStatus
 from .folder import Folder
+from .forum_topic import ForumTopic
+from .forum_topic_closed import ForumTopicClosed
+from .forum_topic_created import ForumTopicCreated
+from .forum_topic_edited import ForumTopicEdited
+from .forum_topic_reopened import ForumTopicReopened
+from .general_forum_topic_hidden import GeneralTopicHidden
+from .general_forum_topic_unhidden import GeneralTopicUnhidden
 from .invite_link_importer import InviteLinkImporter
+from .peer_channel import PeerChannel
+from .peer_user import PeerUser
 from .restriction import Restriction
 from .user import User
 from .username import Username
-from .forum_topic import ForumTopic
-from .forum_topic_created import ForumTopicCreated
-from .forum_topic_closed import ForumTopicClosed
-from .forum_topic_reopened import ForumTopicReopened
-from .forum_topic_edited import ForumTopicEdited
-from .general_forum_topic_hidden import GeneralTopicHidden
-from .general_forum_topic_unhidden import GeneralTopicUnhidden
-from .peer_channel import PeerChannel
-from .peer_user import PeerUser
 from .video_chat_ended import VideoChatEnded
 from .video_chat_members_invited import VideoChatMembersInvited
 from .video_chat_scheduled import VideoChatScheduled
@@ -68,39 +69,39 @@ __all__ = [
     "BusinessWeeklyOpen",
     "BusinessWorkingHours",
     "Chat",
-    "ChatMember",
-    "ChatPermissions",
-    "ChatPhoto",
-    "ChatPreview",
-    "Dialog",
-    "Folder",
-    "User",
-    "Username",
-    "Restriction",
+    "ChatAdminWithInviteLinks",
+    "ChatColor",
     "ChatEvent",
     "ChatEventFilter",
     "ChatInviteLink",
-    "InviteLinkImporter",
-    "ChatAdminWithInviteLinks",
-    "ChatColor",
-    "ForumTopic",
-    "ForumTopicCreated",
-    "ForumTopicClosed",
-    "ForumTopicReopened",
-    "ForumTopicEdited",
-    "GeneralTopicHidden",
-    "GeneralTopicUnhidden",
-    "PeerChannel",
-    "PeerUser",
-    "VideoChatStarted",
-    "VideoChatEnded",
-    "VideoChatMembersInvited",
-    "ChatMemberUpdated",
-    "VideoChatScheduled",
     "ChatJoinRequest",
     "ChatJoinedByRequest",
-    "ChatPrivileges",
     "ChatJoiner",
+    "ChatMember",
+    "ChatMemberUpdated",
+    "ChatPermissions",
+    "ChatPhoto",
+    "ChatPreview",
+    "ChatPrivileges",
+    "ChatReactions",
+    "Dialog",
     "EmojiStatus",
-    "ChatReactions"
+    "Folder",
+    "ForumTopic",
+    "ForumTopicClosed",
+    "ForumTopicCreated",
+    "ForumTopicEdited",
+    "ForumTopicReopened",
+    "GeneralTopicHidden",
+    "GeneralTopicUnhidden",
+    "InviteLinkImporter",
+    "PeerChannel",
+    "PeerUser",
+    "Restriction",
+    "User",
+    "Username",
+    "VideoChatEnded",
+    "VideoChatMembersInvited",
+    "VideoChatScheduled",
+    "VideoChatStarted",
 ]

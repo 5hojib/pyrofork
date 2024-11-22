@@ -16,12 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with PyroFork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import enums, raw
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class Reaction(Object):
@@ -48,12 +47,12 @@ class Reaction(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
-        type: "enums.ReactionType",
-        emoji: Optional[str] = None,
-        custom_emoji_id: Optional[int] = None,
-        count: Optional[int] = None,
-        chosen_order: Optional[int] = None
+        client: pyrogram.Client = None,
+        type: enums.ReactionType,
+        emoji: str | None = None,
+        custom_emoji_id: int | None = None,
+        count: int | None = None,
+        chosen_order: int | None = None,
     ):
         super().__init__(client)
 
@@ -64,34 +63,26 @@ class Reaction(Object):
         self.chosen_order = chosen_order
 
     @staticmethod
-    def _parse(
-        client: "pyrogram.Client",
-        reaction: "raw.base.Reaction"
-    ) -> "Reaction":
+    def _parse(client: pyrogram.Client, reaction: raw.base.Reaction) -> Reaction:
         if isinstance(reaction, raw.types.ReactionEmoji):
             return Reaction(
-                client=client,
-                type=enums.ReactionType.EMOJI,
-                emoji=reaction.emoticon
+                client=client, type=enums.ReactionType.EMOJI, emoji=reaction.emoticon
             )
 
         if isinstance(reaction, raw.types.ReactionCustomEmoji):
             return Reaction(
                 client=client,
                 type=enums.ReactionType.CUSTOM_EMOJI,
-                custom_emoji_id=reaction.document_id
+                custom_emoji_id=reaction.document_id,
             )
         if isinstance(reaction, raw.types.ReactionPaid):
-            return Reaction(
-                client=client,
-                type=enums.ReactionType.PAID
-            )
+            return Reaction(client=client, type=enums.ReactionType.PAID)
+        return None
 
     @staticmethod
     def _parse_count(
-        client: "pyrogram.Client",
-        reaction_count: "raw.base.ReactionCount"
-    ) -> "Reaction":
+        client: pyrogram.Client, reaction_count: raw.base.ReactionCount
+    ) -> Reaction:
         reaction = Reaction._parse(client, reaction_count.reaction)
         reaction.count = reaction_count.count
         reaction.chosen_order = reaction_count.chosen_order

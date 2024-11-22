@@ -16,15 +16,12 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .invoke import Invoke
 from .resolve_peer import ResolvePeer
 from .save_file import SaveFile
 
 
-class Advanced(
-    Invoke,
-    ResolvePeer,
-    SaveFile
-):
+class Advanced(Invoke, ResolvePeer, SaveFile):
     pass

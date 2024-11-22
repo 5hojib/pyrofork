@@ -16,12 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
-from typing import Union
+from pyrogram import raw, types
+from pyrogram.types.object import Object
 
 
 class WebPagePreview(Object):
@@ -44,11 +42,11 @@ class WebPagePreview(Object):
     def __init__(
         self,
         *,
-        webpage: Union["types.WebPage", "types.WebPageEmpty"],
-        force_large_media: bool = None,
-        force_small_media: bool = None,
-        invert_media: bool = None,
-        is_safe: bool = None
+        webpage: types.WebPage | types.WebPageEmpty,
+        force_large_media: bool | None = None,
+        force_small_media: bool | None = None,
+        invert_media: bool | None = None,
+        is_safe: bool | None = None,
     ):
         super().__init__()
 
@@ -61,17 +59,17 @@ class WebPagePreview(Object):
     @staticmethod
     def _parse(
         client,
-        web_page_preview: Union["raw.types.WebPage", "raw.types.WebPageEmpty"],
-        invert_media: bool = None
+        web_page_preview: raw.types.WebPage | raw.types.WebPageEmpty,
+        invert_media: bool | None = None,
     ):
         if isinstance(web_page_preview.webpage, raw.types.WebPage):
-            webpage=types.WebPage._parse(client, web_page_preview.webpage)
+            webpage = types.WebPage._parse(client, web_page_preview.webpage)
         else:
-            webpage=types.WebPageEmpty._parse(web_page_preview.webpage)
+            webpage = types.WebPageEmpty._parse(web_page_preview.webpage)
         return WebPagePreview(
             webpage=webpage,
             force_large_media=web_page_preview.force_large_media,
             force_small_media=web_page_preview.force_small_media,
             invert_media=invert_media,
-            is_safe=web_page_preview.safe
+            is_safe=web_page_preview.safe,
         )

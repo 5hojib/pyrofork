@@ -15,13 +15,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from pyrogram import raw, types
+from pyrogram.types.object import Object
 
 
 class StarGift(Object):
@@ -55,14 +53,14 @@ class StarGift(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         id: int,
-        sticker: "types.Sticker",
+        sticker: types.Sticker,
         price: int,
         convert_price: int,
-        available_amount: Optional[int] = None,
-        total_amount: Optional[int] = None,
-        is_limited: Optional[bool] = None,
+        available_amount: int | None = None,
+        total_amount: int | None = None,
+        is_limited: bool | None = None,
     ):
         super().__init__(client)
 
@@ -77,8 +75,8 @@ class StarGift(Object):
     @staticmethod
     async def _parse(
         client,
-        star_gift: "raw.types.StarGift",
-    ) -> "StarGift":
+        star_gift: raw.types.StarGift,
+    ) -> StarGift:
         doc = star_gift.sticker
         attributes = {type(i): i for i in doc.attributes}
 
@@ -90,5 +88,5 @@ class StarGift(Object):
             available_amount=getattr(star_gift, "availability_remains", None),
             total_amount=getattr(star_gift, "availability_total", None),
             is_limited=getattr(star_gift, "limited", None),
-            client=client
+            client=client,
         )

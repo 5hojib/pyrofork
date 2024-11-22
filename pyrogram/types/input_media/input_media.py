@@ -16,11 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import List, Union, BinaryIO
+from typing import TYPE_CHECKING, BinaryIO
 
-from ..messages_and_media import MessageEntity
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram.types.messages_and_media import MessageEntity
 
 
 class InputMedia(Object):
@@ -37,10 +40,10 @@ class InputMedia(Object):
 
     def __init__(
         self,
-        media: Union[str, BinaryIO],
+        media: str | BinaryIO,
         caption: str = "",
-        parse_mode: str = None,
-        caption_entities: List[MessageEntity] = None
+        parse_mode: str | None = None,
+        caption_entities: list[MessageEntity] | None = None,
     ):
         super().__init__()
 

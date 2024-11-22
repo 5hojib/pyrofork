@@ -15,9 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class PeerChannel(Object):
@@ -29,18 +34,11 @@ class PeerChannel(Object):
             Id of the channel.
     """
 
-    def __init__(
-        self, *,
-        channel_id: int
-    ):
+    def __init__(self, *, channel_id: int):
         super().__init__()
 
         self.channel_id = channel_id
 
     @staticmethod
-    def _parse(action: "raw.types.PeerChannel") -> "PeerChannel":
-
-
-        return PeerChannel(
-            channel_id=getattr(action,"channel_id", None)
-        )
+    def _parse(action: raw.types.PeerChannel) -> PeerChannel:
+        return PeerChannel(channel_id=getattr(action, "channel_id", None))

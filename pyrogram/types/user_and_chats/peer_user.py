@@ -15,9 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class PeerUser(Object):
@@ -29,18 +34,11 @@ class PeerUser(Object):
             Id of the user.
     """
 
-    def __init__(
-        self, *,
-        user_id: int
-    ):
+    def __init__(self, *, user_id: int):
         super().__init__()
 
         self.user_id = user_id
 
     @staticmethod
-    def _parse(action: "raw.types.PeerUser") -> "PeerUser":
-
-
-        return PeerUser(
-            user_id=getattr(action,"user_id", None)
-        )
+    def _parse(action: raw.types.PeerUser) -> PeerUser:
+        return PeerUser(user_id=getattr(action, "user_id", None))

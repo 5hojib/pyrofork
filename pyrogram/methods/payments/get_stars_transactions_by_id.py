@@ -15,22 +15,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from typing import Union, List
+from pyrogram import raw, types
 
 
 class GetStarsTransactionsById:
     async def get_stars_transactions_by_id(
-        self: "pyrogram.Client",
-        transaction_ids: Union[
-            "types.InputStarsTransaction",
-            List["types.InputStarsTransaction"]
-        ],
-        chat_id: Union[int, str] = "me"
-    ) -> "types.StarsStatus":
+        self: pyrogram.Client,
+        transaction_ids: types.InputStarsTransaction
+        | list[types.InputStarsTransaction],
+        chat_id: int | str = "me",
+    ) -> types.StarsStatus:
         """Get stars transactions by transaction id.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -76,12 +73,13 @@ class GetStarsTransactionsById:
         """
         peer = await self.resolve_peer(chat_id)
         is_iterable = not isinstance(transaction_ids, types.InputStarsTransaction)
-        ids = [await transaction_ids.write()] if not is_iterable else [await x.write() for x in transaction_ids]
+        ids = (
+            [await transaction_ids.write()]
+            if not is_iterable
+            else [await x.write() for x in transaction_ids]
+        )
 
         r = await self.invoke(
-            raw.functions.payments.GetStarsTransactionsByID(
-                peer=peer,
-                id=ids
-            )
+            raw.functions.payments.GetStarsTransactionsByID(peer=peer, id=ids)
         )
         return types.StarsStatus._parse(self, r)

@@ -15,19 +15,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with PyroFork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import enums
+from pyrogram import enums, raw
+
 
 class UpdateColor:
     async def update_color(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        color: Union["enums.ReplyColor", "enums.ProfileColor"],
-        background_emoji_id: int = None
+        self: pyrogram.Client,
+        chat_id: int | str,
+        color: enums.ReplyColor | enums.ProfileColor,
+        background_emoji_id: int | None = None,
     ) -> bool:
         """Update color
 
@@ -60,7 +59,7 @@ class UpdateColor:
                 raw.functions.account.UpdateColor(
                     for_profile=isinstance(color, enums.ProfileColor),
                     color=color.value,
-                    background_emoji_id=background_emoji_id
+                    background_emoji_id=background_emoji_id,
                 )
             )
         else:
@@ -68,7 +67,7 @@ class UpdateColor:
                 raw.functions.channels.UpdateColor(
                     channel=peer,
                     color=color.value,
-                    background_emoji_id=background_emoji_id
+                    background_emoji_id=background_emoji_id,
                 )
             )
 

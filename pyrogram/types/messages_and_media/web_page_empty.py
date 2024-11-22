@@ -16,11 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class WebPageEmpty(Object):
@@ -35,21 +38,12 @@ class WebPageEmpty(Object):
             Full URL for this webpage.
     """
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        url: str
-    ):
+    def __init__(self, *, id: str, url: str):
         super().__init__()
 
         self.id = id
         self.url = url
 
     @staticmethod
-    def _parse(webpage: "raw.types.WebPageEmpty") -> "WebPageEmpty":
-
-        return WebPageEmpty(
-            id=str(webpage.id),
-            url=webpage.url
-        )
+    def _parse(webpage: raw.types.WebPageEmpty) -> WebPageEmpty:
+        return WebPageEmpty(id=str(webpage.id), url=webpage.url)

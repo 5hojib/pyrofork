@@ -15,9 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from ..object import Object
-from pyrogram import raw
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
+
 
 class ChatTheme(Object):
     """A service message about a chat theme.
@@ -32,7 +38,5 @@ class ChatTheme(Object):
         self.emoticon = emoticon
 
     @staticmethod
-    def _parse(chat_theme: "raw.types.MessageActionSetChatTheme") -> "ChatTheme":
-        return ChatTheme(
-            emoticon=getattr(chat_theme, "emoticon", None)
-        )
+    def _parse(chat_theme: raw.types.MessageActionSetChatTheme) -> ChatTheme:
+        return ChatTheme(emoticon=getattr(chat_theme, "emoticon", None))

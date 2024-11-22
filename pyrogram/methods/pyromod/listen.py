@@ -16,28 +16,32 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
 import inspect
-import pyrogram
+from typing import TYPE_CHECKING
 
+import pyrogram
 from pyrogram.errors import ListenerTimeout
-from pyrogram.filters import Filter
-from typing import List, Optional, Union
 from pyrogram.types import Identifier, Listener
 from pyrogram.utils import PyromodConfig
 
+if TYPE_CHECKING:
+    from pyrogram.filters import Filter
+
+
 class Listen:
     async def listen(
-        self: "pyrogram.Client",
-        filters: Optional[Filter] = None,
-        listener_type: "pyrogram.enums.ListenerTypes" = pyrogram.enums.ListenerTypes.MESSAGE,
-        timeout: Optional[int] = None,
+        self: pyrogram.Client,
+        filters: Filter | None = None,
+        listener_type: pyrogram.enums.ListenerTypes = pyrogram.enums.ListenerTypes.MESSAGE,
+        timeout: int | None = None,
         unallowed_click_alert: bool = True,
-        chat_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        user_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        message_id: Union[int, List[int]] = None,
-        inline_message_id: Union[str, List[str]] = None,
+        chat_id: int | str | list[int | str] | None = None,
+        user_id: int | str | list[int | str] | None = None,
+        message_id: int | list[int] | None = None,
+        inline_message_id: str | list[str] | None = None,
     ):
         """Listen for a message, callback query, etc.
 
@@ -111,11 +115,17 @@ class Listen:
             return await asyncio.wait_for(future, timeout)
         except asyncio.exceptions.TimeoutError:
             if callable(PyromodConfig.timeout_handler):
-                if inspect.iscoroutinefunction(PyromodConfig.timeout_handler.__call__):
+                if inspect.iscoroutinefunction(
+                    PyromodConfig.timeout_handler.__call__
+                ):
                     await PyromodConfig.timeout_handler(pattern, listener, timeout)
                 else:
                     await self.loop.run_in_executor(
-                        None, PyromodConfig.timeout_handler, pattern, listener, timeout
+                        None,
+                        PyromodConfig.timeout_handler,
+                        pattern,
+                        listener,
+                        timeout,
                     )
             elif PyromodConfig.throw_exceptions:
                 raise ListenerTimeout(timeout)

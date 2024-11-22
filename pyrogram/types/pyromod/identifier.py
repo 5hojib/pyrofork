@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Union, List
+
 
 @dataclass
 class Identifier:
@@ -37,12 +38,13 @@ class Identifier:
         from_user_id (``int`` | ``str`` | Iterable of ``int`` | Iterable of ``str``, *optional*):
             The user ID to match. If None, it is not considered for matching.
     """
-    inline_message_id: Optional[Union[str, List[str]]] = None
-    chat_id: Optional[Union[Union[int, str], List[Union[int, str]]]] = None
-    message_id: Optional[Union[int, List[int]]] = None
-    from_user_id: Optional[Union[Union[int, str], List[Union[int, str]]]] = None
 
-    def matches(self, update: "Identifier") -> bool:
+    inline_message_id: str | list[str] | None = None
+    chat_id: int | str | list[int | str] | None = None
+    message_id: int | list[int] | None = None
+    from_user_id: int | str | list[int | str] | None = None
+
+    def matches(self, update: Identifier) -> bool:
         # Compare each property of other with the corresponding property in self
         # If the property in self is None, the property in other can be anything
         # If the property in self is not None, the property in other must be the same

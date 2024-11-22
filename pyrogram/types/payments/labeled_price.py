@@ -15,9 +15,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-from ..object import Object
+from pyrogram.types.object import Object
+
 
 class LabeledPrice(Object):
     """This object represents a price for goods or services.
@@ -33,16 +35,9 @@ class LabeledPrice(Object):
             you need to add 2 extra zeros to the amount (except stars), example 100 for 1 usd.
     """
 
-    def __init__(
-        self,
-        label: str,
-        amount: int
-    ):
+    def __init__(self, label: str, amount: int):
         self.label = label
         self.amount = amount
 
     def write(self):
-        return raw.types.LabeledPrice(
-            label=self.label,
-            amount=self.amount
-        )
+        return raw.types.LabeledPrice(label=self.label, amount=self.amount)

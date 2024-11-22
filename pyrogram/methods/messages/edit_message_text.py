@@ -16,28 +16,25 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union, List, Optional
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw, enums
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import enums, raw, types, utils
 
 
 class EditMessageText:
     async def edit_message_text(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: int,
         text: str,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        entities: List["types.MessageEntity"] = None,
-        disable_web_page_preview: bool = None,
-        invert_media: bool = None,
-        reply_markup: "types.InlineKeyboardMarkup" = None,
-        business_connection_id: str = None
-    ) -> "types.Message":
+        parse_mode: enums.ParseMode | None = None,
+        entities: list[types.MessageEntity] | None = None,
+        disable_web_page_preview: bool | None = None,
+        invert_media: bool | None = None,
+        reply_markup: types.InlineKeyboardMarkup = None,
+        business_connection_id: str | None = None,
+    ) -> types.Message:
         """Edit the text of messages.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -96,22 +93,25 @@ class EditMessageText:
             no_webpage=disable_web_page_preview or None,
             invert_media=invert_media,
             reply_markup=await reply_markup.write(self) if reply_markup else None,
-            **await utils.parse_text_entities(self, text, parse_mode, entities)
+            **await utils.parse_text_entities(self, text, parse_mode, entities),
         )
         if business_connection_id is not None:
             r = await self.invoke(
                 raw.functions.InvokeWithBusinessConnection(
-                    connection_id=business_connection_id,
-                    query=rpc
+                    connection_id=business_connection_id, query=rpc
                 )
             )
         else:
             r = await self.invoke(rpc)
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateEditMessage, raw.types.UpdateEditChannelMessage)):
+            if isinstance(
+                i, raw.types.UpdateEditMessage | raw.types.UpdateEditChannelMessage
+            ):
                 return await types.Message._parse(
-                    self, i.message,
+                    self,
+                    i.message,
                     {i.id: i for i in r.users},
-                    {i.id: i for i in r.chats}
+                    {i.id: i for i in r.chats},
                 )
+        return None

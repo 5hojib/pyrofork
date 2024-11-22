@@ -16,22 +16,20 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class StopPoll:
     async def stop_poll(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: int,
-        reply_markup: "types.InlineKeyboardMarkup" = None,
-        business_connection_id: str = None
-    ) -> "types.Poll":
+        reply_markup: types.InlineKeyboardMarkup = None,
+        business_connection_id: str | None = None,
+    ) -> types.Poll:
         """Stop a poll which was sent by you.
 
         Stopped polls can't be reopened and nobody will be able to vote in it anymore.
@@ -69,19 +67,15 @@ class StopPoll:
             id=message_id,
             media=raw.types.InputMediaPoll(
                 poll=raw.types.Poll(
-                    id=int(poll.id),
-                    closed=True,
-                    question="",
-                    answers=[]
+                    id=int(poll.id), closed=True, question="", answers=[]
                 )
             ),
-            reply_markup=await reply_markup.write(self) if reply_markup else None
+            reply_markup=await reply_markup.write(self) if reply_markup else None,
         )
         if business_connection_id is not None:
             r = await self.invoke(
                 raw.functions.InvokeWithBusinessConnection(
-                    connection_id=business_connection_id,
-                    query=rpc
+                    connection_id=business_connection_id, query=rpc
                 )
             )
         else:

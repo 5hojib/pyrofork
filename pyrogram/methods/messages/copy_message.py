@@ -16,41 +16,42 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
-from datetime import datetime
-from typing import Union, List, Optional
+from typing import TYPE_CHECKING
 
-import pyrogram
-from pyrogram import types, enums
+if TYPE_CHECKING:
+    from datetime import datetime
+
+    import pyrogram
+    from pyrogram import enums, types
 
 log = logging.getLogger(__name__)
 
 
 class CopyMessage:
     async def copy_message(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        from_chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
+        from_chat_id: int | str,
         message_id: int,
-        caption: str = None,
-        parse_mode: Optional["enums.ParseMode"] = None,
-        caption_entities: List["types.MessageEntity"] = None,
-        has_spoiler: bool = None,
-        disable_notification: bool = None,
-        message_thread_id: int = None,
-        reply_to_message_id: int = None,
-        schedule_date: datetime = None,
-        protect_content: bool = None,
-        allow_paid_broadcast: bool = None,
+        caption: str | None = None,
+        parse_mode: enums.ParseMode | None = None,
+        caption_entities: list[types.MessageEntity] | None = None,
+        has_spoiler: bool | None = None,
+        disable_notification: bool | None = None,
+        message_thread_id: int | None = None,
+        reply_to_message_id: int | None = None,
+        schedule_date: datetime | None = None,
+        protect_content: bool | None = None,
+        allow_paid_broadcast: bool | None = None,
         invert_media: bool = False,
-        reply_markup: Union[
-            "types.InlineKeyboardMarkup",
-            "types.ReplyKeyboardMarkup",
-            "types.ReplyKeyboardRemove",
-            "types.ForceReply"
-        ] = None
-    ) -> "types.Message":
+        reply_markup: types.InlineKeyboardMarkup
+        | types.ReplyKeyboardMarkup
+        | types.ReplyKeyboardRemove
+        | types.ForceReply = None,
+    ) -> types.Message:
         """Copy messages of any kind.
 
         The method is analogous to the method :meth:`~Client.forward_messages`, but the copied message doesn't have a
@@ -141,5 +142,5 @@ class CopyMessage:
             protect_content=protect_content,
             allow_paid_broadcast=allow_paid_broadcast,
             invert_media=invert_media,
-            reply_markup=reply_markup
+            reply_markup=reply_markup,
         )

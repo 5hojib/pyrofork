@@ -16,11 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from io import BytesIO
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from .bytes import Bytes
+
+if TYPE_CHECKING:
+    from io import BytesIO
 
 
 class String(Bytes):

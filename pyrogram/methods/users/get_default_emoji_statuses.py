@@ -16,18 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import List
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetDefaultEmojiStatuses:
     async def get_default_emoji_statuses(
-        self: "pyrogram.Client",
-    ) -> List["types.EmojiStatus"]:
+        self: pyrogram.Client,
+    ) -> list[types.EmojiStatus]:
         """Get the default emoji statuses.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -41,8 +39,6 @@ class GetDefaultEmojiStatuses:
                 default_emoji_statuses = await app.get_default_emoji_statuses()
                 print(default_emoji_statuses)
         """
-        r = await self.invoke(
-            raw.functions.account.GetDefaultEmojiStatuses(hash=0)
-        )
+        r = await self.invoke(raw.functions.account.GetDefaultEmojiStatuses(hash=0))
 
         return types.List([types.EmojiStatus._parse(self, i) for i in r.statuses])

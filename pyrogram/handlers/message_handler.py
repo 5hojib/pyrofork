@@ -16,13 +16,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-from inspect import iscoroutinefunction
-from typing import Callable
-import pyrogram
+from __future__ import annotations
 
-from pyrogram.types import Message, Identifier
+from inspect import iscoroutinefunction
+from typing import TYPE_CHECKING
+
+import pyrogram
+from pyrogram.types import Identifier, Message
 
 from .handler import Handler
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 class MessageHandler(Handler):
@@ -53,7 +58,9 @@ class MessageHandler(Handler):
         self.original_callback = callback
         super().__init__(self.resolve_future_or_callback, filters)
 
-    async def check_if_has_matching_listener(self, client: "pyrogram.Client", message: Message):
+    async def check_if_has_matching_listener(
+        self, client: pyrogram.Client, message: Message
+    ):
         """
         Checks if the message has a matching listener.
 
@@ -77,7 +84,9 @@ class MessageHandler(Handler):
             from_user_id=[from_user_id, from_user_username],
         )
 
-        listener = client.get_listener_matching_with_data(data, pyrogram.enums.ListenerTypes.MESSAGE)
+        listener = client.get_listener_matching_with_data(
+            data, pyrogram.enums.ListenerTypes.MESSAGE
+        )
 
         listener_does_match = False
 
@@ -95,7 +104,7 @@ class MessageHandler(Handler):
 
         return listener_does_match, listener
 
-    async def check(self, client: "pyrogram.Client", message: Message):
+    async def check(self, client: pyrogram.Client, message: Message):
         """
         Checks if the message has a matching listener or handler and its filters does match with the Message.
 
@@ -121,7 +130,9 @@ class MessageHandler(Handler):
         # exists but its filters doesn't match
         return listener_does_match or handler_does_match
 
-    async def resolve_future_or_callback(self, client: "pyrogram.Client", message: Message, *args):
+    async def resolve_future_or_callback(
+        self, client: pyrogram.Client, message: Message, *args
+    ):
         """
         Resolves the future or calls the callback of the listener if the message has a matching listener.
 
@@ -141,14 +152,12 @@ class MessageHandler(Handler):
                 listener.future.set_result(message)
 
                 raise pyrogram.StopPropagation
-            elif listener.callback:
+            if listener.callback:
                 if iscoroutinefunction(listener.callback):
                     await listener.callback(client, message, *args)
                 else:
                     listener.callback(client, message, *args)
 
                 raise pyrogram.StopPropagation
-            else:
-                raise ValueError("Listener must have either a future or a callback")
-        else:
-            await self.original_callback(client, message, *args)
+            raise ValueError("Listener must have either a future or a callback")
+        await self.original_callback(client, message, *args)

@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
 import time
@@ -30,7 +31,7 @@ class MsgId:
     def __new__(cls) -> int:
         now = int(time.time())
         cls.offset = (cls.offset + 4) if now == cls.last_time else 0
-        msg_id = (now * 2 ** 32) + cls.offset
+        msg_id = (now * 2**32) + cls.offset
         cls.last_time = now
 
         return msg_id

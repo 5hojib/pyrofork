@@ -16,13 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Dict
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from pyrogram import raw, types
+from pyrogram.types.object import Object
 
 
 class ChatAdminWithInviteLinks(Object):
@@ -40,10 +38,11 @@ class ChatAdminWithInviteLinks(Object):
     """
 
     def __init__(
-        self, *,
-        admin: "types.User",
+        self,
+        *,
+        admin: types.User,
         chat_invite_links_count: int,
-        revoked_chat_invite_links_count: int = None
+        revoked_chat_invite_links_count: int | None = None,
     ):
         super().__init__()
 
@@ -53,12 +52,12 @@ class ChatAdminWithInviteLinks(Object):
 
     @staticmethod
     def _parse(
-        client: "pyrogram.Client",
-        admin: "raw.types.ChatAdminWithInvites",
-        users: Dict[int, "raw.types.User"] = None
-    ) -> "ChatAdminWithInviteLinks":
+        client: pyrogram.Client,
+        admin: raw.types.ChatAdminWithInvites,
+        users: dict[int, raw.types.User] | None = None,
+    ) -> ChatAdminWithInviteLinks:
         return ChatAdminWithInviteLinks(
             admin=types.User._parse(client, users[admin.admin_id]),
             chat_invite_links_count=admin.invites_count,
-            revoked_chat_invite_links_count=admin.revoked_invites_count
+            revoked_chat_invite_links_count=admin.revoked_invites_count,
         )

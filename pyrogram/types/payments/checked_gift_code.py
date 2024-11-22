@@ -16,11 +16,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
+from typing import TYPE_CHECKING
 
 from pyrogram import raw, types, utils
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class CheckedGiftCode(Object):
@@ -54,11 +58,11 @@ class CheckedGiftCode(Object):
         *,
         date: datetime,
         months: int,
-        via_giveaway: bool = None,
-        from_chat: "types.Chat" = None,
-        winner: "types.User" = None,
-        giveaway_message_id: int = None,
-        used_date: datetime = None
+        via_giveaway: bool | None = None,
+        from_chat: types.Chat = None,
+        winner: types.User = None,
+        giveaway_message_id: int | None = None,
+        used_date: datetime | None = None,
     ):
         super().__init__()
 
@@ -71,7 +75,9 @@ class CheckedGiftCode(Object):
         self.used_date = used_date
 
     @staticmethod
-    def _parse(client, checked_gift_code: "raw.types.payments.CheckedGiftCode", users, chats):
+    def _parse(
+        client, checked_gift_code: raw.types.payments.CheckedGiftCode, users, chats
+    ):
         from_chat = None
         winner = None
 
@@ -89,5 +95,7 @@ class CheckedGiftCode(Object):
             from_chat=from_chat,
             winner=winner,
             giveaway_message_id=getattr(checked_gift_code, "giveaway_msg_id", None),
-            used_date=utils.timestamp_to_datetime(checked_gift_code.used_date) if getattr(checked_gift_code, "used_date") else None,
+            used_date=utils.timestamp_to_datetime(checked_gift_code.used_date)
+            if getattr(checked_gift_code, "used_date")
+            else None,
         )

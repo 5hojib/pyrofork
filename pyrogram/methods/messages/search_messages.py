@@ -16,24 +16,28 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Union, List, AsyncGenerator, Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, types, utils, enums
+from pyrogram import enums, raw, types, utils
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 
 # noinspection PyShadowingBuiltins
 async def get_chunk(
     client,
-    chat_id: Union[int, str],
+    chat_id: int | str,
     query: str = "",
-    filter: "enums.MessagesFilter" = enums.MessagesFilter.EMPTY,
+    filter: enums.MessagesFilter = enums.MessagesFilter.EMPTY,
     offset: int = 0,
     limit: int = 100,
-    from_user: Union[int, str] = None,
-    thread_id: int = None
-) -> List["types.Message"]:
+    from_user: int | str | None = None,
+    thread_id: int | None = None,
+) -> list[types.Message]:
     r = await client.invoke(
         raw.functions.messages.Search(
             peer=await client.resolve_peer(chat_id),
@@ -46,15 +50,11 @@ async def get_chunk(
             limit=limit,
             min_id=0,
             max_id=0,
-            from_id=(
-                await client.resolve_peer(from_user)
-                if from_user
-                else None
-            ),
+            from_id=(await client.resolve_peer(from_user) if from_user else None),
             hash=0,
-            top_msg_id=thread_id
+            top_msg_id=thread_id,
         ),
-        sleep_threshold=60
+        sleep_threshold=60,
     )
 
     return await utils.parse_messages(client, r, replies=0)
@@ -63,15 +63,15 @@ async def get_chunk(
 class SearchMessages:
     # noinspection PyShadowingBuiltins
     async def search_messages(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         query: str = "",
         offset: int = 0,
-        filter: "enums.MessagesFilter" = enums.MessagesFilter.EMPTY,
+        filter: enums.MessagesFilter = enums.MessagesFilter.EMPTY,
         limit: int = 0,
-        from_user: Union[int, str] = None,
-        thread_id: int = None
-    ) -> Optional[AsyncGenerator["types.Message", None]]:
+        from_user: int | str | None = None,
+        thread_id: int | None = None,
+    ) -> AsyncGenerator[types.Message, None] | None:
         """Search for text and media messages inside a specific chat.
 
         If you want to get the messages count only, see :meth:`~pyrogram.Client.search_messages_count`.
@@ -143,7 +143,7 @@ class SearchMessages:
                 offset=offset,
                 limit=limit,
                 from_user=from_user,
-                thread_id=thread_id
+                thread_id=thread_id,
             )
 
             if not messages:

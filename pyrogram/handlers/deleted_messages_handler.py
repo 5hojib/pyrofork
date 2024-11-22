@@ -16,13 +16,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import List, Callable
+from typing import TYPE_CHECKING
 
-import pyrogram
-from pyrogram.filters import Filter
-from pyrogram.types import Message
 from .handler import Handler
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    import pyrogram
+    from pyrogram.filters import Filter
+    from pyrogram.types import Message
 
 
 class DeletedMessagesHandler(Handler):
@@ -52,11 +57,10 @@ class DeletedMessagesHandler(Handler):
     def __init__(self, callback: Callable, filters: Filter = None):
         super().__init__(callback, filters)
 
-    async def check(self, client: "pyrogram.Client", messages: List[Message]):
+    async def check(self, client: pyrogram.Client, messages: list[Message]):
         # Every message should be checked, if at least one matches the filter True is returned
         # otherwise, or if the list is empty, False is returned
         for message in messages:
             if await super().check(client, message):
                 return True
-        else:
-            return False
+        return False

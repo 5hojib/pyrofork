@@ -16,10 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw
-
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class LoginUrl(Object):
@@ -58,12 +58,13 @@ class LoginUrl(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         url: str,
-        forward_text: str = None,
-        bot_username: str = None,
-        request_write_access: str = None,
-        button_id: int = None
+        forward_text: str | None = None,
+        bot_username: str | None = None,
+        request_write_access: str | None = None,
+        button_id: int | None = None,
     ):
         super().__init__()
 
@@ -74,18 +75,14 @@ class LoginUrl(Object):
         self.button_id = button_id
 
     @staticmethod
-    def read(b: "raw.types.KeyboardButtonUrlAuth") -> "LoginUrl":
-        return LoginUrl(
-            url=b.url,
-            forward_text=b.fwd_text,
-            button_id=b.button_id
-        )
+    def read(b: raw.types.KeyboardButtonUrlAuth) -> LoginUrl:
+        return LoginUrl(url=b.url, forward_text=b.fwd_text, button_id=b.button_id)
 
-    def write(self, text: str, bot: "raw.types.InputUser"):
+    def write(self, text: str, bot: raw.types.InputUser):
         return raw.types.InputKeyboardButtonUrlAuth(
             text=text,
             url=self.url,
             bot=bot,
             fwd_text=self.forward_text,
-            request_write_access=self.request_write_access
+            request_write_access=self.request_write_access,
         )

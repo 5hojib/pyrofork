@@ -16,13 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import List, Union
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from ..object import Object
+from pyrogram import raw, types
+from pyrogram.types.object import Object
 
 
 class ReplyKeyboardMarkup(Object):
@@ -59,12 +57,12 @@ class ReplyKeyboardMarkup(Object):
 
     def __init__(
         self,
-        keyboard: List[List[Union["types.KeyboardButton", str]]],
-        is_persistent: bool = None,
-        resize_keyboard: bool = None,
-        one_time_keyboard: bool = None,
-        selective: bool = None,
-        placeholder: str = None
+        keyboard: list[list[types.KeyboardButton | str]],
+        is_persistent: bool | None = None,
+        resize_keyboard: bool | None = None,
+        one_time_keyboard: bool | None = None,
+        selective: bool | None = None,
+        placeholder: str | None = None,
     ):
         super().__init__()
 
@@ -76,7 +74,7 @@ class ReplyKeyboardMarkup(Object):
         self.placeholder = placeholder
 
     @staticmethod
-    def read(kb: "raw.base.ReplyMarkup"):
+    def read(kb: raw.base.ReplyMarkup):
         keyboard = []
 
         for i in kb.rows:
@@ -93,22 +91,26 @@ class ReplyKeyboardMarkup(Object):
             resize_keyboard=kb.resize,
             one_time_keyboard=kb.single_use,
             selective=kb.selective,
-            placeholder=kb.placeholder
+            placeholder=kb.placeholder,
         )
 
     # TODO: Implement KeyboardButtonBuy.write method
-    async def write(self, _: "pyrogram.Client"):
+    async def write(self, _: pyrogram.Client):
         return raw.types.ReplyKeyboardMarkup(
-            rows=[raw.types.KeyboardButtonRow(
-                buttons=[
-                    types.KeyboardButton(j).write()
-                    if isinstance(j, str) else j.write()
-                    for j in i
-                ]
-            ) for i in self.keyboard],
+            rows=[
+                raw.types.KeyboardButtonRow(
+                    buttons=[
+                        types.KeyboardButton(j).write()
+                        if isinstance(j, str)
+                        else j.write()
+                        for j in i
+                    ]
+                )
+                for i in self.keyboard
+            ],
             resize=self.resize_keyboard or None,
             single_use=self.one_time_keyboard or None,
             selective=self.selective or None,
             persistent=self.is_persistent or None,
-            placeholder=self.placeholder or None
+            placeholder=self.placeholder or None,
         )

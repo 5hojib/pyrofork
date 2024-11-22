@@ -15,10 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from typing import List
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
+
 
 class StoryViews(Object):
     """Contains information about a story viewers.
@@ -32,19 +37,15 @@ class StoryViews(Object):
             List of user_id of recent stories viewers.
     """
 
-    def __init__(
-            self, *,
-            view_count: int,
-            recent_viewers: List[int] = None
-    ):
+    def __init__(self, *, view_count: int, recent_viewers: list[int] | None = None):
         super().__init__()
 
         self.view_count = view_count
         self.recent_viewers = recent_viewers
 
     @staticmethod
-    def _parse(storyviews: "raw.types.StoryViews") -> "StoryViews":
+    def _parse(storyviews: raw.types.StoryViews) -> StoryViews:
         return StoryViews(
-            view_count=getattr(storyviews,"view_count", None),
-            recent_viewers=getattr(storyviews,"recent_viewers", None)
+            view_count=getattr(storyviews, "view_count", None),
+            recent_viewers=getattr(storyviews, "recent_viewers", None),
         )

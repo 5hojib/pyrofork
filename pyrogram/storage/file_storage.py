@@ -16,13 +16,17 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
 import os
 import sqlite3
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from .sqlite_storage import SQLiteStorage
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 log = logging.getLogger(__name__)
 

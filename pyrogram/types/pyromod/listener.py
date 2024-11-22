@@ -16,14 +16,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from asyncio import Future
 from dataclasses import dataclass
-from typing import Callable
+from typing import TYPE_CHECKING
 
-import pyrogram
+if TYPE_CHECKING:
+    from asyncio import Future
+    from collections.abc import Callable
 
-from .identifier import Identifier
+    import pyrogram
+
+    from .identifier import Identifier
+
 
 @dataclass
 class Listener:
@@ -53,8 +58,9 @@ class Listener:
         callback (``Callable``, *optional*):
             The callback to call when the listener is fulfilled.
     """
+
     listener_type: pyrogram.enums.ListenerTypes
-    filters: "pyrogram.filters.Filter"
+    filters: pyrogram.filters.Filter
     unallowed_click_alert: bool
     identifier: Identifier
     future: Future = None

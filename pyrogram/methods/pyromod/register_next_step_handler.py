@@ -16,24 +16,30 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import pyrogram
-
-from pyrogram.filters import Filter
-from typing import Callable, List, Optional, Union
 from pyrogram.types import Identifier, Listener
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from pyrogram.filters import Filter
+
 
 class RegisterNextStepHandler:
     def register_next_step_handler(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         callback: Callable,
-        filters: Optional[Filter] = None,
-        listener_type: "pyrogram.enums.ListenerTypes" = pyrogram.enums.ListenerTypes.MESSAGE,
+        filters: Filter | None = None,
+        listener_type: pyrogram.enums.ListenerTypes = pyrogram.enums.ListenerTypes.MESSAGE,
         unallowed_click_alert: bool = True,
-        chat_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        user_id: Union[Union[int, str], List[Union[int, str]]] = None,
-        message_id: Union[int, List[int]] = None,
-        inline_message_id: Union[str, List[str]] = None,
+        chat_id: int | str | list[int | str] | None = None,
+        user_id: int | str | list[int | str] | None = None,
+        message_id: int | list[int] | None = None,
+        inline_message_id: str | list[str] | None = None,
     ):
         """Registers a listener with a callback to be called when the listener is fulfilled.
 

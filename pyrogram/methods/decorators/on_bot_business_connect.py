@@ -15,20 +15,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-
-from typing import Callable
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram.filters import Filter
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class OnBotBusinessConnect:
-    def on_bot_business_connect(
-        self=None,
-        filters=None,
-        group: int = 0
-    ) -> Callable:
+    def on_bot_business_connect(self=None, filters=None, group: int = 0) -> Callable:
         """Decorator for handling bot business connection.
 
         This does the same thing as :meth:`~pyrogram.Client.add_handler` using the
@@ -45,7 +44,9 @@ class OnBotBusinessConnect:
 
         def decorator(func: Callable) -> Callable:
             if isinstance(self, pyrogram.Client):
-                self.add_handler(pyrogram.handlers.BotBusinessConnectHandler(func, filters), group)
+                self.add_handler(
+                    pyrogram.handlers.BotBusinessConnectHandler(func, filters), group
+                )
             elif isinstance(self, Filter) or self is None:
                 if not hasattr(func, "handlers"):
                     func.handlers = []
@@ -53,7 +54,7 @@ class OnBotBusinessConnect:
                 func.handlers.append(
                     (
                         pyrogram.handlers.BotBusinessConnectHandler(func, self),
-                        group if filters is None else filters
+                        group if filters is None else filters,
                     )
                 )
 

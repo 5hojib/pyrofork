@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .apply_gift_code import ApplyGiftCode
 from .check_giftcode import CheckGiftCode
@@ -25,8 +26,8 @@ from .get_payment_form import GetPaymentForm
 from .get_star_gifts import GetStarGifts
 from .get_stars_transactions import GetStarsTransactions
 from .get_stars_transactions_by_id import GetStarsTransactionsById
-from .get_user_star_gifts_count import GetUserStarGiftsCount
 from .get_user_star_gifts import GetUserStarGifts
+from .get_user_star_gifts_count import GetUserStarGiftsCount
 from .hide_star_gift import HideStarGift
 from .refund_stars_payment import RefundStarPayment
 from .send_invoice import SendInvoice
@@ -35,6 +36,7 @@ from .send_paid_reaction import SendPaidReaction
 from .send_payment_form import SendPaymentForm
 from .send_star_gift import SendStarGift
 from .show_star_gift import ShowStarGift
+
 
 class Payments(
     ApplyGiftCode,
@@ -54,6 +56,6 @@ class Payments(
     SendInvoice,
     SendPaymentForm,
     SendStarGift,
-    ShowStarGift
+    ShowStarGift,
 ):
     pass

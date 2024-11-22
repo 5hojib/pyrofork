@@ -16,29 +16,33 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
 import os
 from datetime import datetime
-from typing import Union, Optional, Callable, BinaryIO
+from typing import TYPE_CHECKING, BinaryIO
 
 import pyrogram
 from pyrogram import types
-from pyrogram.file_id import FileId, FileType, PHOTO_TYPES
+from pyrogram.file_id import PHOTO_TYPES, FileId, FileType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 DEFAULT_DOWNLOAD_DIR = "downloads/"
 
 
 class DownloadMedia:
     async def download_media(
-        self: "pyrogram.Client",
-        message: Union["types.Message", "types.Story", str],
+        self: pyrogram.Client,
+        message: types.Message | types.Story | str,
         file_name: str = DEFAULT_DOWNLOAD_DIR,
         in_memory: bool = False,
         block: bool = True,
-        progress: Callable = None,
-        progress_args: tuple = ()
-    ) -> Optional[Union[str, BinaryIO]]:
+        progress: Callable | None = None,
+        progress_args: tuple = (),
+    ) -> str | BinaryIO | None:
         """Download the media from a message.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -120,24 +124,32 @@ class DownloadMedia:
                 file_name = file.name
                 file_bytes = bytes(file.getbuffer())
         """
-        available_media = ("audio", "document", "photo", "sticker", "animation", "video", "voice", "video_note",
-                           "new_chat_photo")
+        available_media = (
+            "audio",
+            "document",
+            "photo",
+            "sticker",
+            "animation",
+            "video",
+            "voice",
+            "video_note",
+            "new_chat_photo",
+        )
 
-        if isinstance(message, types.Message) or isinstance(message, types.Story):
+        if isinstance(message, types.Message | types.Story):
             for kind in available_media:
                 media = getattr(message, kind, None)
 
                 if media is not None:
                     break
             else:
-                raise ValueError("This message doesn't contain any downloadable media")
+                raise ValueError(
+                    "This message doesn't contain any downloadable media"
+                )
         else:
             media = message
 
-        if isinstance(media, str):
-            file_id_str = media
-        else:
-            file_id_str = media.file_id
+        file_id_str = media if isinstance(media, str) else media.file_id
 
         file_id_obj = FileId.decode(file_id_str)
 
@@ -160,7 +172,11 @@ class DownloadMedia:
                 extension = ".jpg"
             elif file_type == FileType.VOICE:
                 extension = guessed_extension or ".ogg"
-            elif file_type in (FileType.VIDEO, FileType.ANIMATION, FileType.VIDEO_NOTE):
+            elif file_type in (
+                FileType.VIDEO,
+                FileType.ANIMATION,
+                FileType.VIDEO_NOTE,
+            ):
                 extension = guessed_extension or ".mp4"
             elif file_type == FileType.DOCUMENT:
                 extension = guessed_extension or ".zip"
@@ -175,14 +191,22 @@ class DownloadMedia:
                 FileType(file_id_obj.file_type).name.lower(),
                 (date or datetime.now()).strftime("%Y-%m-%d_%H-%M-%S"),
                 self.rnd_id(),
-                extension
+                extension,
             )
 
         downloader = self.handle_download(
-            (file_id_obj, directory, file_name, in_memory, file_size, progress, progress_args)
+            (
+                file_id_obj,
+                directory,
+                file_name,
+                in_memory,
+                file_size,
+                progress,
+                progress_args,
+            )
         )
 
         if block:
             return await downloader
-        else:
-            asyncio.get_event_loop().create_task(downloader)
+        asyncio.get_event_loop().create_task(downloader)
+        return None

@@ -16,22 +16,20 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class EditMessageReplyMarkup:
     async def edit_message_reply_markup(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: int,
-        reply_markup: "types.InlineKeyboardMarkup" = None,
-        business_connection_id: str = None
-    ) -> "types.Message":
+        reply_markup: types.InlineKeyboardMarkup = None,
+        business_connection_id: str | None = None,
+    ) -> types.Message:
         """Edit only the reply markup of messages sent by the bot.
 
         .. include:: /_includes/usable-by/bots.rst
@@ -70,22 +68,25 @@ class EditMessageReplyMarkup:
         rpc = raw.functions.messages.EditMessage(
             peer=await self.resolve_peer(chat_id),
             id=message_id,
-            reply_markup=await reply_markup.write(self) if reply_markup else None
+            reply_markup=await reply_markup.write(self) if reply_markup else None,
         )
         if business_connection_id is not None:
             r = await self.invoke(
                 raw.functions.InvokeWithBusinessConnection(
-                    connection_id=business_connection_id,
-                    query=rpc
+                    connection_id=business_connection_id, query=rpc
                 )
             )
         else:
             r = await self.invoke(rpc)
 
         for i in r.updates:
-            if isinstance(i, (raw.types.UpdateEditMessage, raw.types.UpdateEditChannelMessage)):
+            if isinstance(
+                i, raw.types.UpdateEditMessage | raw.types.UpdateEditChannelMessage
+            ):
                 return await types.Message._parse(
-                    self, i.message,
+                    self,
+                    i.message,
                     {i.id: i for i in r.users},
-                    {i.id: i for i in r.chats}
+                    {i.id: i for i in r.chats},
                 )
+        return None

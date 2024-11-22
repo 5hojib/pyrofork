@@ -16,13 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
 import logging
-from typing import Optional, Type
+
+from pyrogram.session.internals import DataCenter
 
 from .transport import TCP, TCPAbridged
-from ..session.internals import DataCenter
 
 log = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class Connection:
         alt_port: bool,
         proxy: dict,
         media: bool = False,
-        protocol_factory: Type[TCP] = TCPAbridged
+        protocol_factory: type[TCP] = TCPAbridged,
     ) -> None:
         self.dc_id = dc_id
         self.test_mode = test_mode
@@ -49,7 +50,7 @@ class Connection:
         self.protocol_factory = protocol_factory
 
         self.address = DataCenter(dc_id, test_mode, ipv6, alt_port, media)
-        self.protocol: Optional[TCP] = None
+        self.protocol: TCP | None = None
 
     async def connect(self) -> None:
         for i in range(Connection.MAX_CONNECTION_ATTEMPTS):
@@ -63,11 +64,13 @@ class Connection:
                 await self.protocol.close()
                 await asyncio.sleep(1)
             else:
-                log.info("Connected! %s DC%s%s - IPv%s",
-                         "Test" if self.test_mode else "Production",
-                         self.dc_id,
-                         " (media)" if self.media else "",
-                         "6" if self.ipv6 else "4")
+                log.info(
+                    "Connected! %s DC%s%s - IPv%s",
+                    "Test" if self.test_mode else "Production",
+                    self.dc_id,
+                    " (media)" if self.media else "",
+                    "6" if self.ipv6 else "4",
+                )
                 break
         else:
             log.warning("Connection failed! Trying again...")
@@ -80,5 +83,5 @@ class Connection:
     async def send(self, data: bytes) -> None:
         await self.protocol.send(data)
 
-    async def recv(self) -> Optional[bytes]:
+    async def recv(self) -> bytes | None:
         return await self.protocol.recv()

@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .copy_media_group import CopyMediaGroup
 from .copy_message import CopyMessage
@@ -39,8 +40,8 @@ from .get_discussion_message import GetDiscussionMessage
 from .get_discussion_replies import GetDiscussionReplies
 from .get_discussion_replies_count import GetDiscussionRepliesCount
 from .get_media_group import GetMediaGroup
-from .get_messages import GetMessages
 from .get_message_read_participants import GetMessageReadParticipants
+from .get_messages import GetMessages
 from .get_scheduled_messages import GetScheduledMessages
 from .read_chat_history import ReadChatHistory
 from .retract_vote import RetractVote
@@ -71,8 +72,9 @@ from .send_voice import SendVoice
 from .send_web_page import SendWebPage
 from .stop_poll import StopPoll
 from .stream_media import StreamMedia
-from .vote_poll import VotePoll
 from .translate_text import TranslateText
+from .vote_poll import VotePoll
+
 
 class Messages(
     DeleteMessages,
@@ -130,6 +132,6 @@ class Messages(
     GetDiscussionRepliesCount,
     StreamMedia,
     GetCustomEmojiStickers,
-    TranslateText
+    TranslateText,
 ):
     pass

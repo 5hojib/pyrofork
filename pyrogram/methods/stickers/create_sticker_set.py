@@ -15,28 +15,26 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import os
 import re
-from typing import Union, Optional
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import raw, types, utils
 from pyrogram.file_id import FileId, FileType
 
 
 class CreateStickerSet:
     async def create_sticker_set(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         title: str,
         short_name: str,
         sticker: str,
-        user_id: Union[int, str] = None,
+        user_id: int | str | None = None,
         emoji: str = "🤔",
-        masks: bool = None
-    ) -> Optional["types.Message"]:
+        masks: bool | None = None,
+    ) -> types.Message | None:
         """Create a new stickerset.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -86,9 +84,11 @@ class CreateStickerSet:
                     user_id or "me",
                     sticker,
                     force_document=True,
-                    disable_notification=True
+                    disable_notification=True,
                 )
-                uploaded_media = utils.get_input_media_from_file_id(document.document.file_id, FileType.DOCUMENT)
+                uploaded_media = utils.get_input_media_from_file_id(
+                    document.document.file_id, FileType.DOCUMENT
+                )
                 media = uploaded_media.id
                 _ = await document.delete()
             else:
@@ -96,16 +96,18 @@ class CreateStickerSet:
                 media = raw.types.InputDocument(
                     id=decoded.media_id,
                     access_hash=decoded.access_hash,
-                    file_reference=decoded.file_reference
+                    file_reference=decoded.file_reference,
                 )
         else:
             document = await self.send_document(
                 user_id or "me",
                 sticker,
                 force_document=True,
-                disable_notification=True
+                disable_notification=True,
             )
-            uploaded_media = utils.get_input_media_from_file_id(document.document.file_id, FileType.DOCUMENT)
+            uploaded_media = utils.get_input_media_from_file_id(
+                document.document.file_id, FileType.DOCUMENT
+            )
             media = uploaded_media.id
             _ = await document.delete()
 
@@ -115,12 +117,9 @@ class CreateStickerSet:
                 title=title,
                 short_name=short_name,
                 stickers=[
-                    raw.types.InputStickerSetItem(
-                        document=media,
-                        emoji=emoji
-                    )
+                    raw.types.InputStickerSetItem(document=media, emoji=emoji)
                 ],
-                masks=masks
+                masks=masks,
             )
         )
 

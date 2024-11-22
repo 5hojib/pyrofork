@@ -15,12 +15,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
+from typing import TYPE_CHECKING
 
-from ..object import Object
+from pyrogram.types.object import Object
 
-from pyrogram import raw
+if TYPE_CHECKING:
+    import pyrogram
+    from pyrogram import raw
+
 
 class GiveawayLaunched(Object):
     """A service message about a giveaway started in the channel.
@@ -30,22 +34,14 @@ class GiveawayLaunched(Object):
             How many stars the giveaway winner(s) get.
     """
 
-    def __init__(
-        self,
-        *,
-        client: "pyrogram.Client" = None,
-        stars: int = None
-    ):
+    def __init__(self, *, client: pyrogram.Client = None, stars: int | None = None):
         super().__init__(client)
 
         self.stars = stars
 
     @staticmethod
     def _parse(
-        client: "pyrogram.Client",
-        giveaway_launched: "raw.types.MessageActionGiveawayLaunch"
-    ) -> "GiveawayLaunched":
-        return GiveawayLaunched(
-            client=client,
-            stars=giveaway_launched.stars
-        )
+        client: pyrogram.Client,
+        giveaway_launched: raw.types.MessageActionGiveawayLaunch,
+    ) -> GiveawayLaunched:
+        return GiveawayLaunched(client=client, stars=giveaway_launched.stars)

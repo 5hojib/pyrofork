@@ -16,10 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-from ..object import Object
-from typing import List, Optional
+from pyrogram.types.object import Object
 
 
 class PollOption(Object):
@@ -43,11 +43,11 @@ class PollOption(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         text: str,
         voter_count: int = 0,
-        data: bytes = None,
-        entities: Optional[List["pyrogram.types.MessageEntity"]] = None,
+        data: bytes | None = None,
+        entities: list[pyrogram.types.MessageEntity] | None = None,
     ):
         super().__init__(client)
 
@@ -57,11 +57,14 @@ class PollOption(Object):
         self.entities = entities
 
     async def write(self, client, i):
-        option, entities = (await pyrogram.utils.parse_text_entities(client, self.text, None, self.entities)).values()
+        option, entities = (
+            await pyrogram.utils.parse_text_entities(
+                client, self.text, None, self.entities
+            )
+        ).values()
         return pyrogram.raw.types.PollAnswer(
             text=pyrogram.raw.types.TextWithEntities(
-                text=option,
-                entities=entities or []
+                text=option, entities=entities or []
             ),
-            option=bytes([i])
+            option=bytes([i]),
         )

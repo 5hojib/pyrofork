@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .business_schedule import BusinessSchedule
 from .chat_action import ChatAction
@@ -43,28 +44,28 @@ from .story_privacy import StoryPrivacy
 from .user_status import UserStatus
 
 __all__ = [
-    'BusinessSchedule',
-    'ChatAction', 
-    'ChatEventAction', 
-    'ChatJoinType',
-    'ChatMemberStatus', 
-    'ChatMembersFilter', 
-    'ChatType', 
-    'ClientPlatform',
-    'FolderColor',
-    'ListenerTypes',
-    'MessageEntityType', 
-    'MessageMediaType', 
-    'MessageServiceType', 
-    'MessagesFilter', 
-    'NextCodeType', 
-    'ParseMode', 
-    'PollType', 
-    'ProfileColor',
-    'ReactionType',
-    'ReplyColor',
-    'SentCodeType',
+    "BusinessSchedule",
+    "ChatAction",
+    "ChatEventAction",
+    "ChatJoinType",
+    "ChatMemberStatus",
+    "ChatMembersFilter",
+    "ChatType",
+    "ClientPlatform",
+    "FolderColor",
+    "ListenerTypes",
+    "MessageEntityType",
+    "MessageMediaType",
+    "MessageServiceType",
+    "MessagesFilter",
+    "NextCodeType",
+    "ParseMode",
+    "PollType",
+    "ProfileColor",
+    "ReactionType",
+    "ReplyColor",
+    "SentCodeType",
     "StoriesPrivacyRules",
     "StoryPrivacy",
-    'UserStatus'
+    "UserStatus",
 ]

@@ -16,12 +16,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from io import BytesIO
-from struct import unpack, pack
-from typing import cast, Any
+from struct import pack, unpack
+from typing import TYPE_CHECKING, Any, cast
 
-from ..tl_object import TLObject
+from pyrogram.raw.core.tl_object import TLObject
+
+if TYPE_CHECKING:
+    from io import BytesIO
 
 
 class Double(bytes, TLObject):

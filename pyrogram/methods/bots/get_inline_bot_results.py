@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -26,12 +25,12 @@ from pyrogram.errors import UnknownError
 
 class GetInlineBotResults:
     async def get_inline_bot_results(
-        self: "pyrogram.Client",
-        bot: Union[int, str],
+        self: pyrogram.Client,
+        bot: int | str,
         query: str = "",
         offset: str = "",
-        latitude: float = None,
-        longitude: float = None
+        latitude: float | None = None,
+        longitude: float | None = None,
     ):
         """Get bot results via inline queries.
         You can then send a result using :meth:`~pyrogram.Client.send_inline_bot_result`
@@ -80,15 +79,13 @@ class GetInlineBotResults:
                     peer=raw.types.InputPeerSelf(),
                     query=query,
                     offset=offset,
-                    geo_point=raw.types.InputGeoPoint(
-                        lat=latitude,
-                        long=longitude
-                    ) if (latitude is not None and longitude is not None) else None
+                    geo_point=raw.types.InputGeoPoint(lat=latitude, long=longitude)
+                    if (latitude is not None and longitude is not None)
+                    else None,
                 )
             )
         except UnknownError as e:
             # TODO: Add this -503 Timeout error into the Error DB
             if e.value.error_code == -503 and e.value.error_message == "Timeout":
                 raise TimeoutError("The inline bot didn't answer in time") from None
-            else:
-                raise e
+            raise e

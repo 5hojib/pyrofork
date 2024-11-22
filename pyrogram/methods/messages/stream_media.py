@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import math
-from typing import Union, Optional, BinaryIO
+from typing import BinaryIO
 
 import pyrogram
 from pyrogram import types
@@ -27,11 +28,11 @@ from pyrogram.file_id import FileId
 
 class StreamMedia:
     async def stream_media(
-        self: "pyrogram.Client",
-        message: Union["types.Message", str],
+        self: pyrogram.Client,
+        message: types.Message | str,
         limit: int = 0,
-        offset: int = 0
-    ) -> Optional[Union[str, BinaryIO]]:
+        offset: int = 0,
+    ) -> str | BinaryIO | None:
         """Stream the media from a message chunk by chunk.
 
         You can use this method to partially download a file into memory or to selectively download chunks of file.
@@ -74,8 +75,17 @@ class StreamMedia:
                 async for chunk in app.stream_media(message, offset=-3):
                     print(len(chunk))
         """
-        available_media = ("audio", "document", "photo", "sticker", "animation", "video", "voice", "video_note",
-                           "new_chat_photo")
+        available_media = (
+            "audio",
+            "document",
+            "photo",
+            "sticker",
+            "animation",
+            "video",
+            "voice",
+            "video_note",
+            "new_chat_photo",
+        )
 
         if isinstance(message, types.Message):
             for kind in available_media:
@@ -84,21 +94,22 @@ class StreamMedia:
                 if media is not None:
                     break
             else:
-                raise ValueError("This message doesn't contain any downloadable media")
+                raise ValueError(
+                    "This message doesn't contain any downloadable media"
+                )
         else:
             media = message
 
-        if isinstance(media, str):
-            file_id_str = media
-        else:
-            file_id_str = media.file_id
+        file_id_str = media if isinstance(media, str) else media.file_id
 
         file_id_obj = FileId.decode(file_id_str)
         file_size = getattr(media, "file_size", 0)
 
         if offset < 0:
             if file_size == 0:
-                raise ValueError("Negative offsets are not supported for file ids, pass a Message object instead")
+                raise ValueError(
+                    "Negative offsets are not supported for file ids, pass a Message object instead"
+                )
 
             chunks = math.ceil(file_size / 1024 / 1024)
             offset += chunks

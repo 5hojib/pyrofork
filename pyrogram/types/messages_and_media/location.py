@@ -16,11 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-
 from pyrogram import raw
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class Location(Object):
@@ -35,11 +35,7 @@ class Location(Object):
     """
 
     def __init__(
-        self,
-        *,
-        client: "pyrogram.Client" = None,
-        longitude: float,
-        latitude: float
+        self, *, client: pyrogram.Client = None, longitude: float, latitude: float
     ):
         super().__init__(client)
 
@@ -47,10 +43,9 @@ class Location(Object):
         self.latitude = latitude
 
     @staticmethod
-    def _parse(client, geo_point: "raw.types.GeoPoint") -> "Location":
+    def _parse(client, geo_point: raw.types.GeoPoint) -> Location:
         if isinstance(geo_point, raw.types.GeoPoint):
             return Location(
-                longitude=geo_point.long,
-                latitude=geo_point.lat,
-                client=client
+                longitude=geo_point.long, latitude=geo_point.lat, client=client
             )
+        return None

@@ -15,10 +15,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .answer_pre_checkout_query import AnswerPreCheckoutQuery
-from .get_business_connection import GetBusinessConnection
 from .get_available_gifts import GetAvailableGifts
+from .get_business_connection import GetBusinessConnection
 from .get_user_gifts import GetUserGifts
 from .sell_gift import SellGift
 from .send_gift import SendGift

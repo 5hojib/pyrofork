@@ -16,17 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class CreateChannel:
     async def create_channel(
-        self: "pyrogram.Client",
-        title: str,
-        description: str = ""
-    ) -> "types.Chat":
+        self: pyrogram.Client, title: str, description: str = ""
+    ) -> types.Chat:
         """Create a new broadcast channel.
 
         .. include:: /_includes/usable-by/users.rst
@@ -48,9 +47,7 @@ class CreateChannel:
         """
         r = await self.invoke(
             raw.functions.channels.CreateChannel(
-                title=title,
-                about=description,
-                broadcast=True
+                title=title, about=description, broadcast=True
             )
         )
 

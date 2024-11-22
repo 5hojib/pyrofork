@@ -16,25 +16,27 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Union
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, utils
-from pyrogram import types
+from pyrogram import raw, types, utils
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class EditChatInviteLink:
     async def edit_chat_invite_link(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         invite_link: str,
-        name: str = None,
-        expire_date: datetime = None,
-        member_limit: int = None,
-        creates_join_request: bool = None
-    ) -> "types.ChatInviteLink":
+        name: str | None = None,
+        expire_date: datetime | None = None,
+        member_limit: int | None = None,
+        creates_join_request: bool | None = None,
+    ) -> types.ChatInviteLink:
         """Edit a non-primary invite link.
 
         You must be an administrator in the chat for this to work and must have the appropriate admin rights.
@@ -85,7 +87,7 @@ class EditChatInviteLink:
                 expire_date=utils.datetime_to_timestamp(expire_date),
                 usage_limit=member_limit,
                 title=name,
-                request_needed=creates_join_request
+                request_needed=creates_join_request,
             )
         )
 

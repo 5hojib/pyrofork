@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw, types
@@ -25,8 +24,8 @@ from pyrogram import raw, types
 
 class GetChatAdminsWithInviteLinks:
     async def get_chat_admins_with_invite_links(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
     ):
         """Get the list of the administrators that have exported invite links in a chat.
 

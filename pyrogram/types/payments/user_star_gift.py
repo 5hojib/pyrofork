@@ -15,15 +15,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
-from ..object import Object
+from pyrogram import raw, types, utils
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class UserStarGift(Object):
@@ -58,15 +59,15 @@ class UserStarGift(Object):
     def __init__(
         self,
         *,
-        client: "pyrogram.Client" = None,
+        client: pyrogram.Client = None,
         date: datetime,
-        star_gift: "types.StarGift",
-        is_name_hidden: Optional[bool] = None,
-        is_saved: Optional[bool] = None,
-        from_user: Optional["types.User"] = None,
-        text: Optional[str] = None,
-        message_id: Optional[int] = None,
-        convert_price: Optional[int] = None
+        star_gift: types.StarGift,
+        is_name_hidden: bool | None = None,
+        is_saved: bool | None = None,
+        from_user: types.User | None = None,
+        text: str | None = None,
+        message_id: int | None = None,
+        convert_price: int | None = None,
     ):
         super().__init__(client)
 
@@ -81,19 +82,23 @@ class UserStarGift(Object):
 
     @staticmethod
     async def _parse(
-        client,
-        user_star_gift: "raw.types.UserStarGift",
-        users: dict
-    ) -> "UserStarGift":
+        client, user_star_gift: raw.types.UserStarGift, users: dict
+    ) -> UserStarGift:
         # TODO: Add entities support
         return UserStarGift(
             date=utils.timestamp_to_datetime(user_star_gift.date),
             star_gift=await types.StarGift._parse(client, user_star_gift.gift),
             is_name_hidden=getattr(user_star_gift, "name_hidden", None),
-            is_saved=not user_star_gift.unsaved if getattr(user_star_gift, "unsaved", None) else None,
-            from_user=types.User._parse(client, users.get(user_star_gift.from_id)) if getattr(user_star_gift, "from_id", None) else None,
-            text=user_star_gift.message.text if getattr(user_star_gift, "message", None) else None,
+            is_saved=not user_star_gift.unsaved
+            if getattr(user_star_gift, "unsaved", None)
+            else None,
+            from_user=types.User._parse(client, users.get(user_star_gift.from_id))
+            if getattr(user_star_gift, "from_id", None)
+            else None,
+            text=user_star_gift.message.text
+            if getattr(user_star_gift, "message", None)
+            else None,
             message_id=getattr(user_star_gift, "msg_id", None),
             convert_price=getattr(user_star_gift, "convert_stars", None),
-            client=client
+            client=client,
         )

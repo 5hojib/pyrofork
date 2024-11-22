@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -25,8 +24,8 @@ from pyrogram import raw
 
 class MarkChatUnread:
     async def mark_chat_unread(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
     ) -> bool:
         """Mark a chat as unread.
 
@@ -43,7 +42,6 @@ class MarkChatUnread:
 
         return await self.invoke(
             raw.functions.messages.MarkDialogUnread(
-                peer=await self.resolve_peer(chat_id),
-                unread=True
+                peer=await self.resolve_peer(chat_id), unread=True
             )
         )

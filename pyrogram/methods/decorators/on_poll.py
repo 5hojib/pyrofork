@@ -16,19 +16,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram.filters import Filter
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class OnPoll:
-    def on_poll(
-        self=None,
-        filters=None,
-        group: int = 0
-    ) -> Callable:
+    def on_poll(self=None, filters=None, group: int = 0) -> Callable:
         """Decorator for handling poll updates.
 
         This does the same thing as :meth:`~pyrogram.Client.add_handler` using the
@@ -53,7 +53,7 @@ class OnPoll:
                 func.handlers.append(
                     (
                         pyrogram.handlers.PollHandler(func, self),
-                        group if filters is None else filters
+                        group if filters is None else filters,
                     )
                 )
 

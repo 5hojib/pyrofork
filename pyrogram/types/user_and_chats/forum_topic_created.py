@@ -15,9 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class ForumTopicCreated(Object):
@@ -39,11 +44,12 @@ class ForumTopicCreated(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         id: int,
         title: str,
         icon_color: int,
-        icon_emoji_id: int = None
+        icon_emoji_id: int | None = None,
     ):
         super().__init__()
 
@@ -53,12 +59,10 @@ class ForumTopicCreated(Object):
         self.icon_emoji_id = icon_emoji_id
 
     @staticmethod
-    def _parse(message: "raw.base.Message") -> "ForumTopicCreated":
-
-
+    def _parse(message: raw.base.Message) -> ForumTopicCreated:
         return ForumTopicCreated(
             id=getattr(message, "id", None),
-            title=getattr(message.action,"title", None),
-            icon_color=getattr(message.action,"icon_color", None),
-            icon_emoji_id=getattr(message.action,"icon_emoji_id", None)
+            title=getattr(message.action, "title", None),
+            icon_color=getattr(message.action, "icon_color", None),
+            icon_emoji_id=getattr(message.action, "icon_emoji_id", None),
         )

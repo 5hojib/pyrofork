@@ -16,53 +16,52 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import os
 import re
-from datetime import datetime
-from typing import Union, BinaryIO, List, Optional, Callable
+from typing import TYPE_CHECKING, BinaryIO
 
 import pyrogram
-from pyrogram import StopTransmission, enums
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import StopTransmission, enums, raw, types, utils
 from pyrogram.errors import FilePartMissing
 from pyrogram.file_id import FileType
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+    from datetime import datetime
 
 
 class SendDocument:
     async def send_document(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        document: Union[str, BinaryIO],
-        thumb: Union[str, BinaryIO] = None,
+        self: pyrogram.Client,
+        chat_id: int | str,
+        document: str | BinaryIO,
+        thumb: str | BinaryIO | None = None,
         caption: str = "",
-        parse_mode: Optional["enums.ParseMode"] = None,
-        caption_entities: List["types.MessageEntity"] = None,
-        file_name: str = None,
-        force_document: bool = None,
-        disable_notification: bool = None,
-        message_thread_id: int = None,
-        business_connection_id: str = None,
-        reply_to_message_id: int = None,
-        reply_to_story_id: int = None,
-        reply_to_chat_id: Union[int, str] = None,
-        quote_text: str = None,
-        quote_entities: List["types.MessageEntity"] = None,
-        message_effect_id: int = None,
-        schedule_date: datetime = None,
-        protect_content: bool = None,
-        allow_paid_broadcast: bool = None,
-        reply_markup: Union[
-            "types.InlineKeyboardMarkup",
-            "types.ReplyKeyboardMarkup",
-            "types.ReplyKeyboardRemove",
-            "types.ForceReply"
-        ] = None,
-        progress: Callable = None,
-        progress_args: tuple = ()
-    ) -> Optional["types.Message"]:
+        parse_mode: enums.ParseMode | None = None,
+        caption_entities: list[types.MessageEntity] | None = None,
+        file_name: str | None = None,
+        force_document: bool | None = None,
+        disable_notification: bool | None = None,
+        message_thread_id: int | None = None,
+        business_connection_id: str | None = None,
+        reply_to_message_id: int | None = None,
+        reply_to_story_id: int | None = None,
+        reply_to_chat_id: int | str | None = None,
+        quote_text: str | None = None,
+        quote_entities: list[types.MessageEntity] | None = None,
+        message_effect_id: int | None = None,
+        schedule_date: datetime | None = None,
+        protect_content: bool | None = None,
+        allow_paid_broadcast: bool | None = None,
+        reply_markup: types.InlineKeyboardMarkup
+        | types.ReplyKeyboardMarkup
+        | types.ReplyKeyboardRemove
+        | types.ForceReply = None,
+        progress: Callable | None = None,
+        progress_args: tuple = (),
+    ) -> types.Message | None:
         """Send generic files.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -120,7 +119,7 @@ class SendDocument:
 
             reply_to_message_id (``int``, *optional*):
                 If the message is a reply, ID of the original message.
-            
+
             reply_to_story_id (``int``, *optional*):
                 Unique identifier for the target story.
 
@@ -205,39 +204,49 @@ class SendDocument:
             reply_to_chat_id=reply_to_chat_id,
             quote_text=quote_text,
             quote_entities=quote_entities,
-            parse_mode=parse_mode
+            parse_mode=parse_mode,
         )
 
         try:
             if isinstance(document, str):
                 if os.path.isfile(document):
                     thumb = await self.save_file(thumb)
-                    file = await self.save_file(document, progress=progress, progress_args=progress_args)
+                    file = await self.save_file(
+                        document, progress=progress, progress_args=progress_args
+                    )
                     media = raw.types.InputMediaUploadedDocument(
-                        mime_type=self.guess_mime_type(document) or "application/zip",
+                        mime_type=self.guess_mime_type(document)
+                        or "application/zip",
                         file=file,
                         force_file=force_document or None,
                         thumb=thumb,
                         attributes=[
-                            raw.types.DocumentAttributeFilename(file_name=file_name or os.path.basename(document))
-                        ]
+                            raw.types.DocumentAttributeFilename(
+                                file_name=file_name or os.path.basename(document)
+                            )
+                        ],
                     )
                 elif re.match("^https?://", document):
-                    media = raw.types.InputMediaDocumentExternal(
-                        url=document
-                    )
+                    media = raw.types.InputMediaDocumentExternal(url=document)
                 else:
-                    media = utils.get_input_media_from_file_id(document, FileType.DOCUMENT)
+                    media = utils.get_input_media_from_file_id(
+                        document, FileType.DOCUMENT
+                    )
             else:
                 thumb = await self.save_file(thumb)
-                file = await self.save_file(document, progress=progress, progress_args=progress_args)
+                file = await self.save_file(
+                    document, progress=progress, progress_args=progress_args
+                )
                 media = raw.types.InputMediaUploadedDocument(
-                    mime_type=self.guess_mime_type(file_name or document.name) or "application/zip",
+                    mime_type=self.guess_mime_type(file_name or document.name)
+                    or "application/zip",
                     file=file,
                     thumb=thumb,
                     attributes=[
-                        raw.types.DocumentAttributeFilename(file_name=file_name or document.name)
-                    ]
+                        raw.types.DocumentAttributeFilename(
+                            file_name=file_name or document.name
+                        )
+                    ],
                 )
 
             while True:
@@ -252,32 +261,43 @@ class SendDocument:
                         noforwards=protect_content,
                         allow_paid_floodskip=allow_paid_broadcast,
                         effect=message_effect_id,
-                        reply_markup=await reply_markup.write(self) if reply_markup else None,
-                        **await utils.parse_text_entities(self, caption, parse_mode, caption_entities)
+                        reply_markup=await reply_markup.write(self)
+                        if reply_markup
+                        else None,
+                        **await utils.parse_text_entities(
+                            self, caption, parse_mode, caption_entities
+                        ),
                     )
                     if business_connection_id is not None:
                         r = await self.invoke(
                             raw.functions.InvokeWithBusinessConnection(
-                                connection_id=business_connection_id,
-                                query=rpc
+                                connection_id=business_connection_id, query=rpc
                             )
                         )
                     else:
                         r = await self.invoke(rpc)
                 except FilePartMissing as e:
-                    await self.save_file(document, file_id=file.id, file_part=e.value)
+                    await self.save_file(
+                        document, file_id=file.id, file_part=e.value
+                    )
                 else:
                     for i in r.updates:
-                        if isinstance(i, (raw.types.UpdateNewMessage,
-                                          raw.types.UpdateNewChannelMessage,
-                                          raw.types.UpdateNewScheduledMessage,
-                                          raw.types.UpdateBotNewBusinessMessage)):
+                        if isinstance(
+                            i,
+                            raw.types.UpdateNewMessage
+                            | raw.types.UpdateNewChannelMessage
+                            | raw.types.UpdateNewScheduledMessage
+                            | raw.types.UpdateBotNewBusinessMessage,
+                        ):
                             return await types.Message._parse(
-                                self, i.message,
+                                self,
+                                i.message,
                                 {i.id: i for i in r.users},
                                 {i.id: i for i in r.chats},
-                                is_scheduled=isinstance(i, raw.types.UpdateNewScheduledMessage),
-                                business_connection_id=business_connection_id
+                                is_scheduled=isinstance(
+                                    i, raw.types.UpdateNewScheduledMessage
+                                ),
+                                business_connection_id=business_connection_id,
                             )
         except StopTransmission:
             return None

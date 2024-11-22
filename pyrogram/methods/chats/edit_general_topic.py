@@ -15,17 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
 import pyrogram
 from pyrogram import raw
-from pyrogram import types
-from typing import Union
 
 
 class EditGeneralTopic:
     async def edit_general_topic(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        title: str
+        self: pyrogram.Client, chat_id: int | str, title: str
     ) -> bool:
         """Edit a general forum topic.
 
@@ -49,9 +47,7 @@ class EditGeneralTopic:
         """
         await self.invoke(
             raw.functions.channels.EditForumTopic(
-                channel=await self.resolve_peer(chat_id),
-                topic_id=1,
-                title=title
+                channel=await self.resolve_peer(chat_id), topic_id=1, title=title
             )
         )
         return True

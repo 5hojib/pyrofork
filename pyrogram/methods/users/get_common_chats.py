@@ -16,19 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union, List
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetCommonChats:
     async def get_common_chats(
-        self: "pyrogram.Client",
-        user_id: Union[int, str]
-    ) -> List["types.Chat"]:
+        self: pyrogram.Client, user_id: int | str
+    ) -> list[types.Chat]:
         """Get the common chats you have with a user.
 
         .. include:: /_includes/usable-by/users.rst

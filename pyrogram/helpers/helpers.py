@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from pyrogram.types import (
+    ForceReply,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     KeyboardButton,
     ReplyKeyboardMarkup,
-    ForceReply,
 )
 
 
@@ -135,4 +137,4 @@ def array_chunk(input_array, size):
     :param size: The size of each chunk.
     :return: List of chunks.
     """
-    return [input_array[i: i + size] for i in range(0, len(input_array), size)]
+    return [input_array[i : i + size] for i in range(0, len(input_array), size)]

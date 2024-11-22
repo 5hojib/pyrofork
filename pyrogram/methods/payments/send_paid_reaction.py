@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with PyroFork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw, types
@@ -25,12 +24,12 @@ from pyrogram import raw, types
 
 class SendPaidReaction:
     async def send_paid_reaction(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         message_id: int,
         amount: int,
-        anonymous: bool = None
-    ) -> "types.MessageReactions":
+        anonymous: bool | None = None,
+    ) -> types.MessageReactions:
         """Use this method to send paid reactions on a channel message.
 
         .. include:: /_includes/usable-by/users.rst
@@ -64,7 +63,7 @@ class SendPaidReaction:
                 msg_id=message_id,
                 count=amount,
                 random_id=self.rnd_id(),
-                private=anonymous
+                private=anonymous,
             )
         )
         users = {i.id: i for i in r.users}
@@ -72,3 +71,4 @@ class SendPaidReaction:
         for i in r.updates:
             if isinstance(i, raw.types.UpdateMessageReactions):
                 return types.MessageReactions._parse(self, i.reactions, users)
+        return None

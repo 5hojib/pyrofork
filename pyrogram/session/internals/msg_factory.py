@@ -16,10 +16,12 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram.raw.core import Message, MsgContainer, TLObject
 from pyrogram.raw.functions import Ping
-from pyrogram.raw.types import MsgsAck, HttpWait
+from pyrogram.raw.types import HttpWait, MsgsAck
+
 from .msg_id import MsgId
 from .seq_no import SeqNo
 
@@ -35,5 +37,5 @@ class MsgFactory:
             body,
             MsgId(),
             self.seq_no(not isinstance(body, not_content_related)),
-            len(body)
+            len(body),
         )

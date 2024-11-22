@@ -16,22 +16,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import AsyncGenerator, Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw, enums
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import enums, raw, types, utils
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 
 class SearchGlobal:
     async def search_global(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
         query: str = "",
-        filter: "enums.MessagesFilter" = enums.MessagesFilter.EMPTY,
+        filter: enums.MessagesFilter = enums.MessagesFilter.EMPTY,
         limit: int = 0,
-    ) -> Optional[AsyncGenerator["types.Message", None]]:
+    ) -> AsyncGenerator[types.Message, None] | None:
         """Search messages globally from all of your chats.
 
         If you want to get the messages count only, see :meth:`~pyrogram.Client.search_global_count`.
@@ -47,7 +49,7 @@ class SearchGlobal:
             query (``str``, *optional*):
                 Text query string.
                 Use "@" to search for mentions.
-            
+
             filter (:obj:`~pyrogram.enums.MessagesFilter`, *optional*):
                 Pass a filter in order to search for specific kind of messages only.
                 Defaults to any message (no filter).
@@ -93,11 +95,11 @@ class SearchGlobal:
                         offset_rate=offset_date,
                         offset_peer=offset_peer,
                         offset_id=offset_id,
-                        limit=limit
+                        limit=limit,
                     ),
-                    sleep_threshold=60
+                    sleep_threshold=60,
                 ),
-                replies=0
+                replies=0,
             )
 
             if not messages:

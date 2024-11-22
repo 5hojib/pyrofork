@@ -16,12 +16,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from datetime import datetime
+from typing import TYPE_CHECKING
 
-from pyrogram import raw, utils
-from pyrogram import types
-from ..object import Object
+from pyrogram import raw, types, utils
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from datetime import datetime
 
 
 class InviteLinkImporter(Object):
@@ -35,18 +38,14 @@ class InviteLinkImporter(Object):
             The user that has used the given invite link
     """
 
-    def __init__(
-        self, *,
-        date: datetime,
-        user: "types.User"
-    ):
+    def __init__(self, *, date: datetime, user: types.User):
         super().__init__(None)
 
         self.date = date
         self.user = user
 
     @staticmethod
-    def _parse(client, invite_importers: "raw.types.messages.ChatInviteImporters"):
+    def _parse(client, invite_importers: raw.types.messages.ChatInviteImporters):
         importers = types.List()
 
         d = {i.id: i for i in invite_importers.users}
@@ -55,7 +54,7 @@ class InviteLinkImporter(Object):
             importers.append(
                 InviteLinkImporter(
                     date=utils.timestamp_to_datetime(j.date),
-                    user=types.User._parse(client=None, user=d[j.user_id])
+                    user=types.User._parse(client=None, user=d[j.user_id]),
                 )
             )
 

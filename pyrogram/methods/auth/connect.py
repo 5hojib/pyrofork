@@ -16,14 +16,19 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-import pyrogram
+from typing import TYPE_CHECKING
+
 from pyrogram.session import Session
+
+if TYPE_CHECKING:
+    import pyrogram
 
 
 class Connect:
     async def connect(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
     ) -> bool:
         """
         Connect the client to Telegram servers.
@@ -41,8 +46,10 @@ class Connect:
         await self.load_session()
 
         self.session = Session(
-            self, await self.storage.dc_id(),
-            await self.storage.auth_key(), await self.storage.test_mode()
+            self,
+            await self.storage.dc_id(),
+            await self.storage.auth_key(),
+            await self.storage.test_mode(),
         )
 
         await self.session.start()

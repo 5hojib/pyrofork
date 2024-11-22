@@ -15,10 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from pyrogram import raw, types
-from typing import Union
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class ForumTopic(Object):
@@ -92,14 +92,14 @@ class ForumTopic(Object):
         unread_count: int,
         unread_mentions_count: int,
         unread_reactions_count: int,
-        from_id: Union["types.PeerChannel", "types.PeerUser"],
-        #notify_settings: "types.PeerNotifySettings", //todo
-        my: bool = None,
-        closed: bool = None,
-        pinned: bool = None,
-        short: bool = None,
-        icon_emoji_id: int = None,
-        #draft: "types.DraftMessage" = None //todo
+        from_id: types.PeerChannel | types.PeerUser,
+        # notify_settings: "types.PeerNotifySettings", //todo
+        my: bool | None = None,
+        closed: bool | None = None,
+        pinned: bool | None = None,
+        short: bool | None = None,
+        icon_emoji_id: int | None = None,
+        # draft: "types.DraftMessage" = None //todo
     ):
         super().__init__()
 
@@ -114,16 +114,16 @@ class ForumTopic(Object):
         self.unread_mentions_count = unread_mentions_count
         self.unread_reactions_count = unread_reactions_count
         self.from_id = from_id
-        #self.notify_settings = notify_settings //todo
+        # self.notify_settings = notify_settings //todo
         self.my = my
         self.closed = closed
         self.pinned = pinned
         self.short = short
         self.icon_emoji_id = icon_emoji_id
-        #self.draft = draft //todo
+        # self.draft = draft //todo
 
     @staticmethod
-    def _parse(forum_topic: "raw.types.forum_topic") -> "ForumTopic":
+    def _parse(forum_topic: raw.types.forum_topic) -> ForumTopic:
         from_id = forum_topic.from_id
         if isinstance(from_id, raw.types.PeerChannel):
             peer = types.PeerChannel._parse(from_id)
@@ -131,22 +131,26 @@ class ForumTopic(Object):
             peer = types.PeerUser._parse(from_id)
 
         return ForumTopic(
-            id=getattr(forum_topic,"id", None),
-            date=getattr(forum_topic,"date", None),
-            title=getattr(forum_topic,"title", None),
-            icon_color=getattr(forum_topic,"icon_color", None),
-            top_message=getattr(forum_topic,"top_message", None),
-            read_inbox_max_id=getattr(forum_topic,"read_inbox_max_id", None),
-            read_outbox_max_id=getattr(forum_topic,"read_outbox_max_id", None),
-            unread_count=getattr(forum_topic,"unread_count", None),
-            unread_mentions_count=getattr(forum_topic,"unread_mentions_count", None),
-            unread_reactions_count=getattr(forum_topic,"unread_reactions_count", None),
+            id=getattr(forum_topic, "id", None),
+            date=getattr(forum_topic, "date", None),
+            title=getattr(forum_topic, "title", None),
+            icon_color=getattr(forum_topic, "icon_color", None),
+            top_message=getattr(forum_topic, "top_message", None),
+            read_inbox_max_id=getattr(forum_topic, "read_inbox_max_id", None),
+            read_outbox_max_id=getattr(forum_topic, "read_outbox_max_id", None),
+            unread_count=getattr(forum_topic, "unread_count", None),
+            unread_mentions_count=getattr(
+                forum_topic, "unread_mentions_count", None
+            ),
+            unread_reactions_count=getattr(
+                forum_topic, "unread_reactions_count", None
+            ),
             from_id=peer,
-            #notify_settings=None, //todo
-            my=getattr(forum_topic,"my", None),
-            closed=getattr(forum_topic,"closed", None),
-            pinned=getattr(forum_topic,"pinned", None),
-            short=getattr(forum_topic,"short", None),
-            icon_emoji_id=getattr(forum_topic,"icon_emoji_id", None),
-            #draft=None //todo
+            # notify_settings=None, //todo
+            my=getattr(forum_topic, "my", None),
+            closed=getattr(forum_topic, "closed", None),
+            pinned=getattr(forum_topic, "pinned", None),
+            short=getattr(forum_topic, "short", None),
+            icon_emoji_id=getattr(forum_topic, "icon_emoji_id", None),
+            # draft=None //todo
         )

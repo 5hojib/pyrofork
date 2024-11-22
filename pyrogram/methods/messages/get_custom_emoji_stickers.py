@@ -16,19 +16,17 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import List, Union
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetCustomEmojiStickers:
     async def get_custom_emoji_stickers(
-        self: "pyrogram.Client",
-        custom_emoji_ids: Union[int, List[int]],
-    ) -> Union["types.Sticker", List["types.Sticker"]]:
+        self: pyrogram.Client,
+        custom_emoji_ids: int | list[int],
+    ) -> types.Sticker | list[types.Sticker]:
         """Get information about custom emoji stickers by their identifiers.
 
         .. include:: /_includes/usable-by/users-bots.rst

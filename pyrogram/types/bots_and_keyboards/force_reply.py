@@ -16,11 +16,11 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
-
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class ForceReply(Object):
@@ -43,9 +43,7 @@ class ForceReply(Object):
     """
 
     def __init__(
-        self,
-        selective: bool = None,
-        placeholder: str = None
+        self, selective: bool | None = None, placeholder: str | None = None
     ):
         super().__init__()
 
@@ -54,14 +52,11 @@ class ForceReply(Object):
 
     @staticmethod
     def read(b):
-        return ForceReply(
-            selective=b.selective,
-            placeholder=b.placeholder
-        )
+        return ForceReply(selective=b.selective, placeholder=b.placeholder)
 
-    async def write(self, _: "pyrogram.Client"):
+    async def write(self, _: pyrogram.Client):
         return raw.types.ReplyKeyboardForceReply(
             single_use=True,
             selective=self.selective or None,
-            placeholder=self.placeholder or None
+            placeholder=self.placeholder or None,
         )

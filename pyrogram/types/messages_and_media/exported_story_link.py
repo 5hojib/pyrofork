@@ -15,10 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from typing import List
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
+
 
 class ExportedStoryLink(Object):
     """Contains information about a story viewers.
@@ -29,16 +34,11 @@ class ExportedStoryLink(Object):
             The link of the story.
     """
 
-    def __init__(
-            self, *,
-            link: str
-    ):
+    def __init__(self, *, link: str):
         super().__init__()
 
         self.link = link
 
     @staticmethod
-    def _parse(exportedstorylink: "raw.types.ExportedStoryLink") -> "ExportedStoryLink":
-        return ExportedStoryLink(
-            link=getattr(exportedstorylink,"link", None)
-        )
+    def _parse(exportedstorylink: raw.types.ExportedStoryLink) -> ExportedStoryLink:
+        return ExportedStoryLink(link=getattr(exportedstorylink, "link", None))

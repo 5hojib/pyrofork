@@ -16,8 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw, types
@@ -25,8 +24,7 @@ from pyrogram import raw, types
 
 class SetEmojiStatus:
     async def set_emoji_status(
-        self: "pyrogram.Client",
-        emoji_status: Optional["types.EmojiStatus"] = None
+        self: pyrogram.Client, emoji_status: types.EmojiStatus | None = None
     ) -> bool:
         """Set the emoji status.
 

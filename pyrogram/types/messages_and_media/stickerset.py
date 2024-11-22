@@ -15,13 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import List, Optional, Union
+from typing import TYPE_CHECKING
 
-import pyrogram
-from pyrogram import raw
-from pyrogram.file_id import FileId, FileType, FileUniqueId, FileUniqueType, ThumbnailSource
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class StickerSet(Object):
@@ -54,8 +55,8 @@ class StickerSet(Object):
         title: str,
         short_name: str,
         count: int,
-        masks: bool = None,
-        emojis: bool = None
+        masks: bool | None = None,
+        emojis: bool | None = None,
     ):
         self.id = id
         self.title = title
@@ -65,13 +66,12 @@ class StickerSet(Object):
         self.emojis = emojis
 
     @staticmethod
-    def _parse(stickerset: "raw.types.StickerSet") -> "StickerSet":
-
+    def _parse(stickerset: raw.types.StickerSet) -> StickerSet:
         return StickerSet(
-            id=getattr(stickerset,"id", None),
-            title=getattr(stickerset,"title", None),
-            short_name=getattr(stickerset,"short_name", None),
-            count=getattr(stickerset,"count", None),
-            masks=getattr(stickerset,"masks", None),
-            emojis=getattr(stickerset,"emojis", None)
+            id=getattr(stickerset, "id", None),
+            title=getattr(stickerset, "title", None),
+            short_name=getattr(stickerset, "short_name", None),
+            count=getattr(stickerset, "count", None),
+            masks=getattr(stickerset, "masks", None),
+            emojis=getattr(stickerset, "emojis", None),
         )

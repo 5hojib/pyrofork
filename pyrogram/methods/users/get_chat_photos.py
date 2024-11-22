@@ -16,24 +16,27 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Union, AsyncGenerator, Optional
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import types, raw, utils
+from pyrogram import raw, types, utils
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 
 class GetChatPhotos:
     async def get_chat_photos(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         limit: int = 0,
-    ) -> Optional[
-        Union[
-            AsyncGenerator["types.Photo", None],
-            AsyncGenerator["types.Animation", None]
-        ]
-    ]:
+    ) -> (
+        AsyncGenerator[types.Photo, None]
+        | AsyncGenerator[types.Animation, None]
+        | None
+    ):
         """Get a chat or a user profile photos sequentially.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -62,19 +65,16 @@ class GetChatPhotos:
 
         if isinstance(peer_id, raw.types.InputPeerChannel):
             r = await self.invoke(
-                raw.functions.channels.GetFullChannel(
-                    channel=peer_id
-                )
+                raw.functions.channels.GetFullChannel(channel=peer_id)
             )
 
             current = types.Photo._parse(self, r.full_chat.chat_photo) or []
             current = [current]
             current_animation = types.Animation._parse_chat_animation(
-                self,
-                r.full_chat.chat_photo
+                self, r.full_chat.chat_photo
             )
             if current_animation:
-                current = current + [current_animation]
+                current = [*current, current_animation]
             extra = []
             if not self.me.is_bot:
                 r = await utils.parse_messages(
@@ -91,9 +91,9 @@ class GetChatPhotos:
                             limit=limit,
                             max_id=0,
                             min_id=0,
-                            hash=0
+                            hash=0,
                         )
-                    )
+                    ),
                 )
 
                 extra = [message.new_chat_photo for message in r] if r else []
@@ -101,23 +101,26 @@ class GetChatPhotos:
             if extra:
                 if (
                     current
-                    and
-                    len(current) > 0
-                    and
-                    isinstance(current[0], types.Photo)
+                    and len(current) > 0
+                    and isinstance(current[0], types.Photo)
                 ):
-                    photos = (current + extra) if current[0].file_id != extra[0].file_id else extra
+                    photos = (
+                        (current + extra)
+                        if current[0].file_id != extra[0].file_id
+                        else extra
+                    )
                 else:
                     photos = extra
+            elif current:
+                photos = current
             else:
-                if current:
-                    photos = current
-                else:
-                    photos = []
+                photos = []
 
             current = 0
 
-            if len(photos) == 0 or (len(photos) == 1 and not isinstance(photos[0], types.Photo)):
+            if len(photos) == 0 or (
+                len(photos) == 1 and not isinstance(photos[0], types.Photo)
+            ):
                 return
 
             for photo in photos:
@@ -136,21 +139,15 @@ class GetChatPhotos:
             while True:
                 r = await self.invoke(
                     raw.functions.photos.GetUserPhotos(
-                        user_id=peer_id,
-                        offset=offset,
-                        max_id=0,
-                        limit=limit
+                        user_id=peer_id, offset=offset, max_id=0, limit=limit
                     )
                 )
 
                 photos = []
                 for photo in r.photos:
-                    photos.append(
-                        types.Photo._parse(self, photo)
-                    )
+                    photos.append(types.Photo._parse(self, photo))
                     current_animation = types.Animation._parse_chat_animation(
-                        self,
-                        photo
+                        self, photo
                     )
                     if current_animation:
                         photos.append(current_animation)

@@ -16,22 +16,26 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import asyncio
-import pyrogram
-from typing import Union
 from functools import partial
+from typing import TYPE_CHECKING
 
+import pyrogram
 from pyrogram import types
-from pyrogram.filters import Filter
+
+if TYPE_CHECKING:
+    from pyrogram.filters import Filter
+
 
 class WaitForMessage:
     async def wait_for_message(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
+        self: pyrogram.Client,
+        chat_id: int | str,
         filters: Filter = None,
-        timeout: int = None
-    ) -> "types.Message":
+        timeout: int | None = None,
+    ) -> types.Message:
         """Wait for message.
 
         .. include:: /_includes/usable-by/users-bots.rst
@@ -73,11 +77,8 @@ class WaitForMessage:
         conversation_handler = self.dispatcher.conversation_handler
         future = self.loop.create_future()
         future.add_done_callback(
-            partial(
-                conversation_handler.delete_waiter,
-                chat_id
-            )
+            partial(conversation_handler.delete_waiter, chat_id)
         )
-        waiter = dict(future=future, filters=filters, update_type=types.Message)
+        waiter = {"future": future, "filters": filters, "update_type": types.Message}
         conversation_handler.waiters[chat_id] = waiter
         return await asyncio.wait_for(future, timeout=timeout)

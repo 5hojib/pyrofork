@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
 
@@ -27,7 +28,7 @@ log = logging.getLogger(__name__)
 
 class Terminate:
     async def terminate(
-        self: "pyrogram.Client",
+        self: pyrogram.Client,
     ):
         """Terminate the client by shutting down workers.
 

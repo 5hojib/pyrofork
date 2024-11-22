@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 
 class SeqNo:
@@ -23,7 +24,9 @@ class SeqNo:
         self.content_related_messages_sent = 0
 
     def __call__(self, is_content_related: bool) -> int:
-        seq_no = (self.content_related_messages_sent * 2) + (1 if is_content_related else 0)
+        seq_no = (self.content_related_messages_sent * 2) + (
+            1 if is_content_related else 0
+        )
 
         if is_content_related:
             self.content_related_messages_sent += 1

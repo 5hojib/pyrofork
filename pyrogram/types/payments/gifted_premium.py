@@ -16,11 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from random import choice
+from typing import TYPE_CHECKING
 
-from pyrogram import raw, types
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class GiftedPremium(Object):
@@ -49,12 +52,12 @@ class GiftedPremium(Object):
     def __init__(
         self,
         *,
-        gifter_user_id: int = None,
-        currency: str = None,
-        amount: int = None,
-        cryptocurrency: str = None,
-        cryptocurrency_amount: int = None,
-        month_count: int = None
+        gifter_user_id: int | None = None,
+        currency: str | None = None,
+        amount: int | None = None,
+        cryptocurrency: str | None = None,
+        cryptocurrency_amount: int | None = None,
+        month_count: int | None = None,
     ):
         super().__init__()
 
@@ -68,14 +71,14 @@ class GiftedPremium(Object):
     @staticmethod
     async def _parse(
         client,
-        gifted_premium: "raw.types.MessageActionGiftPremium",
-        gifter_user_id: int
-    ) -> "GiftedPremium":
+        gifted_premium: raw.types.MessageActionGiftPremium,
+        gifter_user_id: int,
+    ) -> GiftedPremium:
         return GiftedPremium(
             gifter_user_id=gifter_user_id,
             currency=gifted_premium.currency,
             amount=gifted_premium.amount,
             cryptocurrency=getattr(gifted_premium, "crypto_currency", None),
             cryptocurrency_amount=getattr(gifted_premium, "crypto_amount", None),
-            month_count=gifted_premium.months
+            month_count=gifted_premium.months,
         )

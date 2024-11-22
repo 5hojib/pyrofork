@@ -15,8 +15,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Union
+from __future__ import annotations
 
 import pyrogram
 from pyrogram import raw
@@ -24,9 +23,7 @@ from pyrogram import raw
 
 class GetBotInfo:
     async def get_bot_info(
-        self: "pyrogram.Client",
-        lang_code: str,
-        bot: Union[int, str] = None
+        self: pyrogram.Client, lang_code: str, bot: int | str | None = None
     ) -> pyrogram.types.BotInfo:
         """Get the bot info in given language.
 
@@ -45,5 +42,7 @@ class GetBotInfo:
         peer = None
         if bot:
             peer = await self.resolve_peer(bot)
-        r = await self.invoke(raw.functions.bots.GetBotInfo(lang_code=lang_code, bot=peer))
+        r = await self.invoke(
+            raw.functions.bots.GetBotInfo(lang_code=lang_code, bot=peer)
+        )
         return pyrogram.types.BotInfo._parse(r)

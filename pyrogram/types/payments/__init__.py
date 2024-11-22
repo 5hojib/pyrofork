@@ -16,9 +16,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from .extended_media_preview import ExtendedMediaPreview
 from .checked_gift_code import CheckedGiftCode
+from .extended_media_preview import ExtendedMediaPreview
 from .gift import Gift
 from .gift_code import GiftCode
 from .gifted_premium import GiftedPremium
@@ -38,8 +39,8 @@ from .user_gift import UserGift
 from .user_star_gift import UserStarGift
 
 __all__ = [
-    "ExtendedMediaPreview",
     "CheckedGiftCode",
+    "ExtendedMediaPreview",
     "Gift",
     "GiftCode",
     "GiftedPremium",
@@ -56,5 +57,5 @@ __all__ = [
     "StarsTransaction",
     "SuccessfulPayment",
     "UserGift",
-    "UserStarGift"
+    "UserStarGift",
 ]

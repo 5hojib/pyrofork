@@ -15,10 +15,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import types
+from typing import TYPE_CHECKING
 
-from ..object import Object
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import types
 
 
 class InputMediaArea(Object):
@@ -31,10 +35,7 @@ class InputMediaArea(Object):
 
     # TODO: InputMediaAreaVenue
 
-    def __init__(
-        self,
-        coordinates: "types.MediaAreaCoordinates"
-    ):
+    def __init__(self, coordinates: types.MediaAreaCoordinates):
         super().__init__()
 
         self.coordinates = coordinates

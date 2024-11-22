@@ -15,50 +15,47 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import pyrogram
-
-from typing import Optional
-
 from pyrogram import raw, types
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class BotApp(Object):
-        
     """Contains information about a bot app.
-    
-        Parameters:
-            id (``int``):
-                The id of the app.
 
-            short_name (``str``):
-                The short name of the app.
+    Parameters:
+        id (``int``):
+            The id of the app.
 
-            title (``str``):
-                The title of the app.
+        short_name (``str``):
+            The short name of the app.
 
-            description (``str``):
-                The description of the app.
+        title (``str``):
+            The title of the app.
 
-            photo (``types.Photo``):
-                The photo of the app.
+        description (``str``):
+            The description of the app.
 
-            document (:obj:`~pyrogram.types.Document`, *optional*):
-                The document of the app.
+        photo (``types.Photo``):
+            The photo of the app.
+
+        document (:obj:`~pyrogram.types.Document`, *optional*):
+            The document of the app.
     """
-            
+
     def __init__(
         self,
         id: int,
         short_name: str,
         title: str,
         description: str,
-        photo: "types.Photo",
-        document: Optional["types.Document"] = None
+        photo: types.Photo,
+        document: types.Document | None = None,
     ):
         super().__init__()
-        
+
         self.id = id
         self.short_name = short_name
         self.title = title
@@ -67,14 +64,14 @@ class BotApp(Object):
         self.document = document
 
     @staticmethod
-    def _parse(client: "pyrogram.Client", bot_app: "raw.types.BotApp") -> "BotApp":
+    def _parse(client: pyrogram.Client, bot_app: raw.types.BotApp) -> BotApp:
         document = None
         if isinstance(bot_app.document, raw.types.Document):
             attributes = {type(i): i for i in bot_app.document.attributes}
             file_name = getattr(
-                attributes.get(
-                    raw.types.DocumentAttributeFilename, None
-                ), "file_name", None
+                attributes.get(raw.types.DocumentAttributeFilename, None),
+                "file_name",
+                None,
             )
             document = types.Document._parse(client, bot_app.document, file_name)
         return BotApp(
@@ -83,5 +80,5 @@ class BotApp(Object):
             title=bot_app.title,
             description=bot_app.description,
             photo=types.Photo._parse(client, bot_app.photo),
-            document=document
+            document=document,
         )

@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .add_contact import AddContact
 from .delete_contacts import DeleteContacts
@@ -25,10 +26,6 @@ from .import_contacts import ImportContacts
 
 
 class Contacts(
-    GetContacts,
-    DeleteContacts,
-    ImportContacts,
-    GetContactsCount,
-    AddContact
+    GetContacts, DeleteContacts, ImportContacts, GetContactsCount, AddContact
 ):
     pass

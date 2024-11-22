@@ -16,8 +16,9 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from ..object import Object
+from pyrogram.types.object import Object
 
 
 class ShippingAddress(Object):
@@ -44,13 +45,14 @@ class ShippingAddress(Object):
     """
 
     def __init__(
-        self, *,
+        self,
+        *,
         street_line1: str,
         street_line2: str,
         city: str,
         state: str,
         post_code: str,
-        country_code: str
+        country_code: str,
     ):
         super().__init__()
 

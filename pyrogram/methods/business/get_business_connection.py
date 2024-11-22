@@ -15,19 +15,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
-
-from datetime import datetime
-from typing import Union, List
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import types, utils, raw
+from pyrogram import raw, types
 
 
 class GetBusinessConnection:
     async def get_business_connection(
-        self: "pyrogram.Client",
-        business_connection_id: str
-    ) -> "types.Message":
+        self: pyrogram.Client, business_connection_id: str
+    ) -> types.Message:
         """Use this method to get information about the connection of the bot with a business account.
 
         .. include:: /_includes/usable-by/bots.rst
@@ -46,13 +43,8 @@ class GetBusinessConnection:
             )
         )
         for i in r.updates:
-            if isinstance(
-                i,
-                (
-                    raw.types.UpdateBotBusinessConnect
-                )
-            ):
+            if isinstance(i, (raw.types.UpdateBotBusinessConnect)):
                 return await types.BotBusinessConnection._parse(
-                    client=self,
-                    bot_connection=i.connection
+                    client=self, bot_connection=i.connection
                 )
+        return None

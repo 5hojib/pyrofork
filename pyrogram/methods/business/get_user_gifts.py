@@ -15,20 +15,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrogram.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Union, Optional, AsyncGenerator
+from typing import TYPE_CHECKING
 
 import pyrogram
 from pyrogram import raw, types
 
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
 
 class GetUserGifts:
     async def get_user_gifts(
-        self: "pyrogram.Client",
-        user_id: Union[int, str],
+        self: pyrogram.Client,
+        user_id: int | str,
         offset: str = "",
         limit: int = 0,
-    ) -> Optional[AsyncGenerator["types.UserGift", None]]:
+    ) -> AsyncGenerator[types.UserGift, None] | None:
         """Get gifts saved to profile by the given user.
 
         .. include:: /_includes/usable-by/users.rst
@@ -56,7 +60,7 @@ class GetUserGifts:
         """
         peer = await self.resolve_peer(user_id)
 
-        if not isinstance(peer, (raw.types.InputPeerUser, raw.types.InputPeerSelf)):
+        if not isinstance(peer, raw.types.InputPeerUser | raw.types.InputPeerSelf):
             raise ValueError("user_id must belong to a user.")
 
         current = 0
@@ -66,18 +70,15 @@ class GetUserGifts:
         while True:
             r = await self.invoke(
                 raw.functions.payments.GetUserStarGifts(
-                    user_id=peer,
-                    offset=offset,
-                    limit=limit
+                    user_id=peer, offset=offset, limit=limit
                 ),
-                sleep_threshold=max(60, self.sleep_threshold)
+                sleep_threshold=max(60, self.sleep_threshold),
             )
 
             users = {u.id: u for u in r.users}
 
             user_gifts = [
-                await types.UserGift._parse(self, gift, users)
-                for gift in r.gifts
+                await types.UserGift._parse(self, gift, users) for gift in r.gifts
             ]
 
             if not user_gifts:

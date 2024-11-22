@@ -16,9 +16,14 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pyrogram import raw
-from ..object import Object
+from typing import TYPE_CHECKING
+
+from pyrogram.types.object import Object
+
+if TYPE_CHECKING:
+    from pyrogram import raw
 
 
 class Restriction(Object):
@@ -43,9 +48,9 @@ class Restriction(Object):
         self.text = text
 
     @staticmethod
-    def _parse(restriction: "raw.types.RestrictionReason") -> "Restriction":
+    def _parse(restriction: raw.types.RestrictionReason) -> Restriction:
         return Restriction(
             platform=restriction.platform,
             reason=restriction.reason,
-            text=restriction.text
+            text=restriction.text,
         )

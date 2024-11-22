@@ -15,16 +15,15 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
+
 import pyrogram
 from pyrogram import raw
-from pyrogram import types
-from typing import Union
 
 
 class UnhideGeneralTopic:
     async def unhide_general_topic(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str]
+        self: pyrogram.Client, chat_id: int | str
     ) -> bool:
         """unhide a general forum topic.
 
@@ -45,9 +44,7 @@ class UnhideGeneralTopic:
         """
         await self.invoke(
             raw.functions.channels.EditForumTopic(
-                channel=await self.resolve_peer(chat_id),
-                topic_id=1,
-                hidden=False
+                channel=await self.resolve_peer(chat_id), topic_id=1, hidden=False
             )
         )
         return True

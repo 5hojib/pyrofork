@@ -15,10 +15,10 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from pymongo.client_session import TransactionOptions
-from bson.codec_options import CodecOptions
-from pymongo.read_concern import ReadConcern
+from typing import TYPE_CHECKING, Any, Union
+
 from pymongo.read_preferences import (
     Nearest,
     Primary,
@@ -26,15 +26,22 @@ from pymongo.read_preferences import (
     Secondary,
     SecondaryPreferred,
 )
-from pymongo.write_concern import WriteConcern
-from typing import Any, Optional, Union
+
+if TYPE_CHECKING:
+    from bson.codec_options import CodecOptions
+    from pymongo.client_session import TransactionOptions
+    from pymongo.read_concern import ReadConcern
+    from pymongo.write_concern import WriteConcern
 
 try:
     from typing import Protocol, runtime_checkable
 except ImportError:
     from typing_extensions import Protocol, runtime_checkable
 
-ReadPreferences = Union[Primary, PrimaryPreferred, Secondary, SecondaryPreferred, Nearest]
+ReadPreferences = Union[
+    Primary, PrimaryPreferred, Secondary, SecondaryPreferred, Nearest
+]
+
 
 @runtime_checkable
 class DummyMongoClient(Protocol):
@@ -43,20 +50,20 @@ class DummyMongoClient(Protocol):
 
     def get_database(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         *,
-        codec_options: Optional[CodecOptions] = None,
-        read_preference: Optional[ReadPreferences] = None,
-        write_concern: Optional[WriteConcern] = None,
-        read_concern: Optional[ReadConcern] = None,
+        codec_options: CodecOptions | None = None,
+        read_preference: ReadPreferences | None = None,
+        write_concern: WriteConcern | None = None,
+        read_concern: ReadConcern | None = None,
     ):
         raise NotImplementedError
-    
+
     async def start_session(
         self,
         *,
-        causal_consistency: Optional[bool] = None,
-        default_transaction_options: Optional[TransactionOptions] = None,
+        causal_consistency: bool | None = None,
+        default_transaction_options: TransactionOptions | None = None,
         snapshot: bool = False,
     ):
         raise NotImplementedError

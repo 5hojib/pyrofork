@@ -16,6 +16,7 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 from .block_user import BlockUser
 from .delete_profile_photos import DeleteProfilePhotos
@@ -23,15 +24,15 @@ from .delete_stories import DeleteStories
 from .edit_story import EditStory
 from .export_story_link import ExportStoryLink
 from .forward_story import ForwardStory
+from .get_all_stories import GetAllStories
 from .get_chat_photos import GetChatPhotos
 from .get_chat_photos_count import GetChatPhotosCount
 from .get_common_chats import GetCommonChats
 from .get_default_emoji_statuses import GetDefaultEmojiStatuses
 from .get_me import GetMe
-from .get_all_stories import GetAllStories
+from .get_peer_stories import GetPeerStories
 from .get_stories import GetStories
 from .get_stories_history import GetUserStoriesHistory
-from .get_peer_stories import GetPeerStories
 from .get_users import GetUsers
 from .send_story import SendStory
 from .set_emoji_status import SetEmojiStatus
@@ -67,6 +68,6 @@ class Users(
     UpdateProfile,
     GetDefaultEmojiStatuses,
     SetEmojiStatus,
-    SendStory
+    SendStory,
 ):
     pass

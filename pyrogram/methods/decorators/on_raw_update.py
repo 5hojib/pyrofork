@@ -16,17 +16,18 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING
 
 import pyrogram
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 class OnRawUpdate:
-    def on_raw_update(
-        self=None,
-        group: int = 0
-    ) -> Callable:
+    def on_raw_update(self=None, group: int = 0) -> Callable:
         """Decorator for handling raw updates.
 
         This does the same thing as :meth:`~pyrogram.Client.add_handler` using the
@@ -45,10 +46,7 @@ class OnRawUpdate:
                     func.handlers = []
 
                 func.handlers.append(
-                    (
-                        pyrogram.handlers.RawUpdateHandler(func),
-                        group
-                    )
+                    (pyrogram.handlers.RawUpdateHandler(func), group)
                 )
 
             return func

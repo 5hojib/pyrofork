@@ -16,19 +16,16 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
-
-from typing import Optional
+from __future__ import annotations
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
+from pyrogram import raw, types
 
 
 class GetBotDefaultPrivileges:
     async def get_bot_default_privileges(
-        self: "pyrogram.Client",
-        for_channels: bool = None
-    ) -> Optional["types.ChatPrivileges"]:
+        self: pyrogram.Client, for_channels: bool | None = None
+    ) -> types.ChatPrivileges | None:
         """Get the current default privileges of the bot.
 
         .. include:: /_includes/usable-by/bots.rst
@@ -48,12 +45,14 @@ class GetBotDefaultPrivileges:
         """
 
         bot_info = await self.invoke(
-            raw.functions.users.GetFullUser(
-                id=raw.types.InputUserSelf()
-            )
+            raw.functions.users.GetFullUser(id=raw.types.InputUserSelf())
         )
 
-        field = "bot_broadcast_admin_rights" if for_channels else "bot_group_admin_rights"
+        field = (
+            "bot_broadcast_admin_rights"
+            if for_channels
+            else "bot_group_admin_rights"
+        )
 
         admin_rights = getattr(bot_info.full_user, field)
 

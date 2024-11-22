@@ -16,24 +16,24 @@
 #
 #  You should have received a copy of the GNU Lesser General Public License
 #  along with Pyrofork.  If not, see <http://www.gnu.org/licenses/>.
+from __future__ import annotations
 
 import logging
-from typing import Union, List, Iterable
+from typing import TYPE_CHECKING
 
 import pyrogram
-from pyrogram import raw
-from pyrogram import types
-from pyrogram import utils
+from pyrogram import raw, types
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 log = logging.getLogger(__name__)
 
 
 class GetForumTopicsByID:
     async def get_forum_topics_by_id(
-        self: "pyrogram.Client",
-        chat_id: Union[int, str],
-        topic_ids: Union[int, Iterable[int]]
-    ) -> Union["types.ForumTopic", List["types.ForumTopic"]]:
+        self: pyrogram.Client, chat_id: int | str, topic_ids: int | Iterable[int]
+    ) -> types.ForumTopic | list[types.ForumTopic]:
         """Get one or more topic from a chat by using topic identifiers.
 
         .. include:: /_includes/usable-by/users.rst
@@ -63,10 +63,7 @@ class GetForumTopicsByID:
         Raises:
             ValueError: In case of invalid arguments.
         """
-        ids, ids_type = (
-            (topic_ids, int) if topic_ids
-            else (None, None)
-        )
+        ids, ids_type = (topic_ids, int) if topic_ids else (None, None)
 
         if ids is None:
             raise ValueError("No argument supplied. Either pass topic_ids")
@@ -75,7 +72,7 @@ class GetForumTopicsByID:
 
         is_iterable = not isinstance(ids, int)
         ids = list(ids) if is_iterable else [ids]
-        ids = [i for i in ids]
+        ids = list(ids)
 
         rpc = raw.functions.channels.GetForumTopicsByID(channel=peer, topics=ids)
 
